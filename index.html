@@ -1,0 +1,25 @@
+<html>
+<head>
+    <script type="text/javascript" src="PitchTable.js"></script>
+    <script type="text/javascript" src="Mixer.js"></script>
+    <script type="text/javascript" src="MixerChannel.js"></script>
+    <script type="text/javascript" src="Sequencer.js"></script>
+
+    <script type="text/javascript" src="MonoSynth.js"></script>
+
+    <script type="text/javascript" src="Generator.js"></script>
+    <script type="text/javascript">
+        function defaultFocus() {
+            document.getElementById("startButton").focus();
+        }
+
+        function start() {
+            let generator = new Generator();
+            generator.start();
+        }
+    </script>
+</head>
+<body onload="defaultFocus()">
+    <button id="startButton" onclick="start();">Start</button>
+</body>
+</html>
