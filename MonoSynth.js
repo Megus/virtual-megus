@@ -5,9 +5,9 @@ function MonoSynth(context, pitchTable) {
     this.settings = {
         gain: 1,
         ampEnvelope: {
-            attack: 0,
-            decay: 0.2,
-            sustain: 0.3,
+            attack: 0.1,
+            decay: 0.3,
+            sustain: 0.1,
             release: 0.6,
         },
     };
@@ -41,7 +41,7 @@ MonoSynth.prototype.startNote = function(time, note) {
 }
 
 MonoSynth.prototype.stopNote = function(time, note) {
-    this.voices.forEach((v) => v.stopNote(time));
+    this.voices.forEach((v) => v.stopNote(time, note));
 }
 
 MonoSynth.prototype.shutNote = function(time) {
@@ -78,9 +78,11 @@ SynthVoice.prototype.startNote = function(time, note) {
 
     this.oscNode.frequency.setValueAtTime(note.pitch, time);
 
+    this.velocity = note.velocity;
+
     // Amp envelope: attack
     if (this.ampEnvelope.attack != 0) {
-        this.gainNode.gain.setValueAtTime(0, time);
+        this.gainNode.gain.setValueAtTime(0.0001, time);
         this.gainNode.gain.exponentialRampToValueAtTime(note.velocity, time + this.ampEnvelope.attack);
     } else {
         this.gainNode.gain.setValueAtTime(note.velocity, time);
@@ -88,7 +90,7 @@ SynthVoice.prototype.startNote = function(time, note) {
 
     // Amp evelope: decay
     this.gainNode.gain.exponentialRampToValueAtTime(
-        (this.ampEnvelope.sustain + 0.0001),
+        (this.ampEnvelope.sustain * note.velocity + 0.0001),
         time + this.ampEnvelope.attack + this.ampEnvelope.decay);
 
     if (this.ampEnvelope.sustain == 0) {
@@ -96,9 +98,9 @@ SynthVoice.prototype.startNote = function(time, note) {
     }
 }
 
-SynthVoice.prototype.stopNote = function(time) {
+SynthVoice.prototype.stopNote = function(time, note) {
     this.gainNode.gain.cancelAndHoldAtTime(time);
-    this.gainNode.gain.exponentialRampToValueAtTime(this.ampEnvelope.sustain + 0.0001, time);
+    this.gainNode.gain.exponentialRampToValueAtTime(this.ampEnvelope.sustain * this.velocity + 0.0001, time);
     this.gainNode.gain.exponentialRampToValueAtTime(0.0001, time + this.ampEnvelope.release);
     this.oscNode.stop(time + this.ampEnvelope.release);
 }

@@ -16,12 +16,12 @@ Generator.prototype.start = function() {
         steps: 8,
         events: [
             {time: 0x0, type: 'noteOn', data: {pitch: 48, velocity: 1}},
-            //{time: 0x100, type: 'noteOff', data: {pitch: 48}},
-            {time: 0x100, type: 'noteOn', data: {pitch: 55, velocity: 1}},
+            {time: 0x100, type: 'noteOff', data: {pitch: 48}},
+            {time: 0x100, type: 'noteOn', data: {pitch: 55, velocity: 0.5}},
             {time: 0x200, type: 'noteOff', data: {pitch: 55}},
             {time: 0x200, type: 'noteOn', data: {pitch: 60, velocity: 1}},
             {time: 0x300, type: 'noteOff', data: {pitch: 60}},
-            {time: 0x400, type: 'noteOn', data: {pitch: 51, velocity: 1}},
+            {time: 0x400, type: 'noteOn', data: {pitch: 51, velocity: 0.7}},
             {time: 0x480, type: 'noteOff', data: {pitch: 51}},
         ],
     };
