@@ -53,7 +53,7 @@ Sequencer.prototype.scheduler = function() {
             } else {
                 break;
             }
-        } while (true);
+        } while (idx != loop.idx);
         loop.idx = idx;
     }
 
