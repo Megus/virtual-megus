@@ -1,11 +1,15 @@
+let _monoSynthId = 0;
+
 function MonoSynth(context, pitchTable) {
+    this.id = 'MonoSynth' + (_monoSynthId++);
+
     this.pitchTable = pitchTable;
     this.context = context;
 
     this.settings = {
         gain: 1,
         ampEnvelope: {
-            attack: 0.1,
+            attack: 0,
             decay: 0.3,
             sustain: 0.1,
             release: 0.6,

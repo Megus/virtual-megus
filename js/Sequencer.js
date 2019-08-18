@@ -11,7 +11,7 @@ Sequencer.prototype.setBPM = function(bpm) {
 }
 
 Sequencer.prototype.addLoop = function(unit, loop) {
-    this.loops[unit] = {loop: loop, unit: unit, idx: 0};
+    this.loops[unit.id] = {loop: loop, unit: unit, idx: 0};
 }
 
 Sequencer.prototype.start = function() {
@@ -40,8 +40,11 @@ Sequencer.prototype.scheduler = function() {
 
         do {
             const event = loop.loop.events[idx];
-            const eventTime = (event.time / 256.0 - currentStep) * this.stepLength;
-            if (eventTime >= 0 && this.stepTime + eventTime < this.context.currentTime + this.scheduleAhead) {
+            let eventTime = (event.time / 256.0 - currentStep) * this.stepLength;
+            if (eventTime < 0) {
+                eventTime += this.stepLength * loopSteps;
+            }
+            if (this.stepTime + eventTime < this.context.currentTime + this.scheduleAhead) {
                 this.handleEvent(loop.unit, event, this.stepTime + eventTime);
                 idx++;
                 if (idx == loop.loop.events.length) {
