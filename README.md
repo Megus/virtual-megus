@@ -4,4 +4,4 @@ For years I wanted to experiment with procedural music. In August 2019 I decided
 
 My goal is to create a system, which can play infinite electronic music. I'm not into abstract noises, so I'm trying to achieve pleasant to listen results.
 
-I'm going to document my progress in [my blog](https://megus.org) and [my Twitter](https://twitter.com/sugem)
+I'm going to document my progress in [my blog](https://megus.org) and [Twitter](https://twitter.com/sugem).
