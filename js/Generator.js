@@ -6,10 +6,13 @@ function Generator() {
 }
 
 Generator.prototype.start = async function() {
-    const synth = new MonoSynth(this.mixer.context, this.pitchTable);
+    const bass = new MonoSynth(this.mixer.context, this.pitchTable, synthPresets['bass']);
+    const stabs = new PolySynth(this.mixer.context, this.pitchTable, synthPresets['stab']);
+    console.log(stabs.output);
     const drums = new DrumMachine(this.mixer.context);
     const sequencer = new Sequencer(this.mixer.context);
-    this.mixer.addChannel(synth);
+    this.mixer.addChannel(bass);
+    this.mixer.addChannel(stabs);
     this.mixer.addChannel(drums);
 
     const kitInfo = [
@@ -27,7 +30,7 @@ Generator.prototype.start = async function() {
 
     sequencer.setBPM(100);
 
-    const synthLoop = {
+    const bassLoop = {
         steps: 8,
         events: [
             {time: 0x0, type: 'noteOn', data: {pitch: 24, velocity: 1}},
@@ -38,6 +41,16 @@ Generator.prototype.start = async function() {
             {time: 0x500, type: 'noteOn', data: {pitch: 24, velocity: 1}},
             {time: 0x600, type: 'noteOn', data: {pitch: 24, velocity: 1}},
             {time: 0x700, type: 'noteOn', data: {pitch: 36, velocity: 1}},
+        ],
+    };
+
+    const stabLoop = {
+        steps: 8,
+        events: [
+            {time: 0x0, type: 'noteOn', data: {pitch: 48, velocity: 1}},
+            {time: 0x500, type: 'noteOn', data: {pitch: 48, velocity: 1}},
+            {time: 0x600, type: 'noteOn', data: {pitch: 51, velocity: 1}},
+            {time: 0x700, type: 'noteOn', data: {pitch: 55, velocity: 1}},
         ],
     };
 
@@ -59,7 +72,8 @@ Generator.prototype.start = async function() {
         ],
     };
 
-    sequencer.addLoop(synth, synthLoop);
+    sequencer.addLoop(bass, bassLoop);
+    sequencer.addLoop(stabs, stabLoop);
     sequencer.addLoop(drums, drumLoop);
     sequencer.start();
 }
