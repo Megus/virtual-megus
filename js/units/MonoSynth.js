@@ -126,49 +126,17 @@ SynthVoice.prototype.startNote = function(time, note) {
 
     this.velocity = note.velocity;
 
-    // Amp envelope:
-    // Attack
-    if (this.ampEnvelope.attack != 0) {
-        this.gainNode.gain.setValueAtTime(0.0001, time);
-        this.gainNode.gain.exponentialRampToValueAtTime(note.velocity, time + this.ampEnvelope.attack);
-    } else {
-        this.gainNode.gain.setValueAtTime(note.velocity, time);
-    }
-
-    // Decay
-    this.gainNode.gain.exponentialRampToValueAtTime(
-        (this.ampEnvelope.sustain * note.velocity + 0.0001),
-        time + this.ampEnvelope.attack + this.ampEnvelope.decay);
+    applyEnvelopeADS(time, this.ampEnvelope, this.gainNode.gain, 0, note.velocity);
+    applyEnvelopeADS(time, this.filterEnvelope, this.filterNode.frequency, this.filter.cutoff, this.filter.envelopeLevel);
 
     if (this.ampEnvelope.sustain == 0) {
         this.shutNote(time + this.ampEnvelope.attack + this.ampEnvelope.decay);
     }
-
-    // Filter envelope
-    // Attack
-    this.filterNode.Q.value = this.filter.resonance;
-    if (this.filterEnvelope.attack != 0) {
-        this.filterNode.frequency.setValueAtTime(this.filter.cutoff, time);
-        this.filterNode.frequency.exponentialRampToValueAtTime(this.filter.cutoff + this.filter.envelopeLevel, this.this.filterEnvelope.attack);
-    } else {
-        this.filterNode.frequency.setValueAtTime(this.filter.cutoff + this.filter.envelopeLevel, time);
-    }
-
-    // Decay
-    this.filterNode.frequency.exponentialRampToValueAtTime(
-        this.filter.cutoff + this.filter.envelopeLevel * this.filterEnvelope.sustain,
-        time + this.filterEnvelope.attack + this.filterEnvelope.decay);
 }
 
 SynthVoice.prototype.stopNote = function(time, note) {
-    this.gainNode.gain.cancelAndHoldAtTime(time);
-    this.gainNode.gain.exponentialRampToValueAtTime(this.ampEnvelope.sustain * this.velocity + 0.0001, time);
-    this.gainNode.gain.exponentialRampToValueAtTime(0.0001, time + this.ampEnvelope.release);
-
-    this.filterNode.frequency.cancelAndHoldAtTime(time);
-    this.filterNode.frequency.exponentialRampToValueAtTime(this.filter.cutoff + this.filterEnvelope.sustain * this.filter.envelopeLevel, time);
-    this.filterNode.frequency.exponentialRampToValueAtTime(this.filter.cutoff, time + this.ampEnvelope.release);
-
+    applyEnvelopeR(time, this.ampEnvelope, this.gainNode.gain, 0, this.velocity);
+    applyEnvelopeR(time, this.filterEnvelope, this.filterNode.frequency, this.filter.cutoff, this.filter.envelopeLevel);
     this.shutNote(time + this.ampEnvelope.release);
 }
 
