@@ -42,7 +42,7 @@ DrumMachine.prototype.startNote = function(time, note) {
     const sampleNode = this.context.createBufferSource();
     const ampNode = this.context.createGain();
 
-    ampNode.gain.value = 1;//note.velocity;
+    ampNode.gain.value = note.velocity;
 
     sampleNode.buffer = this.kit[instrumentIdx][sampleIdx];
 

@@ -20,5 +20,19 @@ const synthPresets = {
             {type: 'sawtooth', pitch: 0, detune: -15, level: 0.33},
             {type: 'sawtooth', pitch: 0, detune: 15, level: 0.33},
         ]
-    }
+    },
+
+    'pad': {
+        ampEnvelope: {attack: 0.03, decay: 4, sustain: 0, release: 0},
+        filterEnvelope: {attack: 0.03, decay: 2, sustain: 0, release: 0},
+        filter: {cutoff: 600, resonance: 2, envelopeLevel: 1000, type: 'highpass'},
+        osc: [
+            {type: 'sawtooth', pitch: 0, detune: 0, level: 0.33},
+            {type: 'sawtooth', pitch: 0, detune: -10, level: 0.23},
+            {type: 'sawtooth', pitch: 0, detune: 10, level: 0.23},
+            {type: 'sawtooth', pitch: -12, detune: 0, level: 0.3},
+            {type: 'sawtooth', pitch: 12, detune: 0, level: 0.2},
+            {type: 'sawtooth', pitch: 7, detune: 0, level: 0.2},
+        ]
+    },
 }

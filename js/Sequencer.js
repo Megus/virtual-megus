@@ -1,6 +1,7 @@
 function Sequencer(context) {
     this.context = context;
     this.loops = {};
+    this.loopStartTimes = {};
 
     this.period = 25.0;
     this.scheduleAhead = 0.1;
@@ -27,28 +28,32 @@ Sequencer.prototype.stop = function() {
 }
 
 Sequencer.prototype.scheduler = function() {
-    if (this.context.currentTime >= this.stepTime + this.stepLength) {
+    const currentTime = this.context.currentTime;
+    if (currentTime >= this.stepTime + this.stepLength) {
         this.step++;
         this.stepTime += this.stepLength;
     }
 
     for (let unitId in this.loops) {
         const loop = this.loops[unitId];
-        const loopSteps = loop.loop.steps;
-        const currentStep = this.step % loopSteps;
+
+        if (this.loopStartTimes[unitId] == null) {
+            this.loopStartTimes[unitId] = currentTime;
+        }
+        let loopStart = this.loopStartTimes[unitId];
+
         let idx = loop.idx;
 
         do {
             const event = loop.loop.events[idx];
-            let eventTime = (event.time / 256.0 - currentStep) * this.stepLength;
-            if (eventTime < 0) {
-                eventTime += this.stepLength * loopSteps;
-            }
-            if (this.stepTime + eventTime < this.context.currentTime + this.scheduleAhead) {
-                this.handleEvent(loop.unit, event, this.stepTime + eventTime);
+            let eventTime = (event.time / 256.0) * this.stepLength + loopStart;
+            if (eventTime <= this.context.currentTime + this.scheduleAhead) {
+                this.handleEvent(loop.unit, event, eventTime);
                 idx++;
                 if (idx == loop.loop.events.length) {
                     idx = 0;
+                    loopStart += loop.loop.steps * this.stepLength;
+                    this.loopStartTimes[unitId] = loopStart;
                 }
             } else {
                 break;
@@ -61,8 +66,6 @@ Sequencer.prototype.scheduler = function() {
 }
 
 Sequencer.prototype.handleEvent = function(unit, event, time) {
-    /*console.log(event);
-    console.log(time);*/
     if (event.type == 'noteOn') {
         unit.startNote(time, event.data);
     } else if (event.type == 'noteOff') {
