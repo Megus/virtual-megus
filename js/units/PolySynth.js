@@ -1,7 +1,7 @@
 let _polySynthId = 0;
 
 function PolySynth(context, pitchTable, preset) {
-    this.id = 'PolySynth' + (_polySynthId++);
+    this.id = 'polysynt' + (_polySynthId++);
 
     this.pitchTable = pitchTable;
     this.context = context;

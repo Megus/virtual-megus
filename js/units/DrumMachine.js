@@ -1,7 +1,7 @@
 let _drumMachineId = 0;
 
 function DrumMachine(context) {
-    this.id = 'DrumMachine' + (_drumMachineId++);
+    this.id = 'drummach' + (_drumMachineId++);
 
     this.context = context;
     this.kit = [];

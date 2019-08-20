@@ -9,6 +9,8 @@
     <script type="text/javascript" src="js/units/PolySynth.js"></script>
     <script type="text/javascript" src="js/units/DrumMachine.js"></script>
 
+    <script type="text/javascript" src="js/visuals/Visualizer.js"></script>
+
     <script type="text/javascript" src="js/helpers.js"></script>
     <script type="text/javascript" src="js/PitchTable.js"></script>
     <script type="text/javascript" src="js/Sequencer.js"></script>
@@ -19,12 +21,14 @@
         }
 
         function start() {
-            let generator = new Generator();
+            const generator = new Generator();
+            const visualizer = new Visualizer("visuals", generator.sequencer);
             generator.start();
         }
     </script>
 </head>
 <body onload="defaultFocus()">
-    <button id="startButton" onclick="start();">Start</button>
+    <button id="startButton" onclick="start();">Start</button><br />
+    <canvas id="visuals" width="1024" height="1024" style="width: 512px; height: 512px;"></canvas>
 </body>
 </html>

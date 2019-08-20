@@ -5,6 +5,9 @@ function Sequencer(context) {
 
     this.period = 25.0;
     this.scheduleAhead = 0.1;
+
+    this.onBeat = null;
+    this.onEvent = null;
 }
 
 Sequencer.prototype.setBPM = function(bpm) {
@@ -20,6 +23,8 @@ Sequencer.prototype.start = function() {
     this.stepTime = this.context.currentTime;
     this.stepLength = 15.0 / this.bpm; // 60/4, each step is 1/16
 
+    if (this.onBeat != null) { this.onBeat(this.stepTime, this.step); }
+
     this.scheduler();
 }
 
@@ -29,10 +34,15 @@ Sequencer.prototype.stop = function() {
 
 Sequencer.prototype.scheduler = function() {
     const currentTime = this.context.currentTime;
+    if (this.onBeat != null && currentTime + this.scheduleAhead >= this.stepTime + this.stepLength) {
+        this.onBeat(this.stepTime + this.stepLength, this.step + 1);
+    }
+
     if (currentTime >= this.stepTime + this.stepLength) {
         this.step++;
         this.stepTime += this.stepLength;
     }
+
 
     for (let unitId in this.loops) {
         const loop = this.loops[unitId];
@@ -66,6 +76,8 @@ Sequencer.prototype.scheduler = function() {
 }
 
 Sequencer.prototype.handleEvent = function(unit, event, time) {
+    if (this.onEvent != null) { this.onEvent(time, event.type, unit.id, event.data); }
+
     if (event.type == 'noteOn') {
         unit.startNote(time, event.data);
     } else if (event.type == 'noteOff') {

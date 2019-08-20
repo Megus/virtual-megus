@@ -1,7 +1,7 @@
 let _monoSynthId = 0;
 
 function MonoSynth(context, pitchTable, preset) {
-    this.id = 'MonoSynth' + (_monoSynthId++);
+    this.id = 'monosynt' + (_monoSynthId++);
 
     this.pitchTable = pitchTable;
     this.context = context;

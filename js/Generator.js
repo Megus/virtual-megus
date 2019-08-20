@@ -2,6 +2,7 @@
 
 function Generator() {
     this.mixer = new Mixer();
+    this.sequencer = new Sequencer(this.mixer.context);
     this.pitchTable = createPitchTable(440.0);
 }
 
@@ -9,7 +10,7 @@ Generator.prototype.start = async function() {
     const bass = new MonoSynth(this.mixer.context, this.pitchTable, synthPresets['bass']);
     const synth = new PolySynth(this.mixer.context, this.pitchTable, synthPresets['pad']);
     const drums = new DrumMachine(this.mixer.context);
-    const sequencer = new Sequencer(this.mixer.context);
+
     this.mixer.addChannel(bass);
     this.mixer.addChannel(synth);
     this.mixer.addChannel(drums);
@@ -26,8 +27,6 @@ Generator.prototype.start = async function() {
     ];
 
     await drums.loadKit(kitInfo);
-
-    sequencer.setBPM(100);
 
     const bassLoop = {
         steps: 8,
@@ -71,8 +70,9 @@ Generator.prototype.start = async function() {
         ],
     };
 
-    sequencer.addLoop(bass, bassLoop);
-    sequencer.addLoop(synth, synthLoop);
-    sequencer.addLoop(drums, drumLoop);
-    sequencer.start();
+    this.sequencer.setBPM(100);
+    this.sequencer.addLoop(bass, bassLoop);
+    this.sequencer.addLoop(synth, synthLoop);
+    this.sequencer.addLoop(drums, drumLoop);
+    this.sequencer.start();
 }
