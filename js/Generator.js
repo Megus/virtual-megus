@@ -71,8 +71,18 @@ Generator.prototype.start = async function() {
     };
 
     this.sequencer.setBPM(100);
-    this.sequencer.addLoop(bass, bassLoop);
-    this.sequencer.addLoop(synth, synthLoop);
-    this.sequencer.addLoop(drums, drumLoop);
+    //this.sequencer.addLoop(bass, bassLoop);
+    //this.sequencer.addLoop(synth, synthLoop);
+    //this.sequencer.addLoop(drums, drumLoop);
+
+    this.generators = {
+        [drums.id]: new GDrums1(this.sequencer, this.mixer, drums),
+        [bass.id]: new GBass1(this.sequencer, this.mixer, bass),
+    };
+
+    this.sequencer.onPatternStart = (unitId) => {
+        this.generators[unitId].nextPattern();
+    };
+
     this.sequencer.start();
 }

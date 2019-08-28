@@ -8,6 +8,7 @@ function Sequencer(context) {
 
     this.onBeat = null;
     this.onEvent = null;
+    this.onPatternStart = null;
 }
 
 Sequencer.prototype.setBPM = function(bpm) {
@@ -15,7 +16,10 @@ Sequencer.prototype.setBPM = function(bpm) {
 }
 
 Sequencer.prototype.addLoop = function(unit, loop) {
-    this.loops[unit.id] = {loop: loop, unit: unit, idx: 0};
+    if (this.loops[unit.id] == null) {
+        this.loops[unit.id] = [];
+    }
+    this.loops[unit.id].push({loop: loop, unit: unit, idx: 0});
 }
 
 Sequencer.prototype.start = function() {
@@ -43,9 +47,8 @@ Sequencer.prototype.scheduler = function() {
         this.stepTime += this.stepLength;
     }
 
-
     for (let unitId in this.loops) {
-        const loop = this.loops[unitId];
+        let loop = this.loops[unitId][0];
 
         if (this.loopStartTimes[unitId] == null) {
             this.loopStartTimes[unitId] = currentTime;
@@ -56,14 +59,23 @@ Sequencer.prototype.scheduler = function() {
 
         do {
             const event = loop.loop.events[idx];
+            if (event == null) break;
             let eventTime = (event.time / 256.0) * this.stepLength + loopStart;
             if (eventTime <= this.context.currentTime + this.scheduleAhead) {
                 this.handleEvent(loop.unit, event, eventTime);
                 idx++;
                 if (idx == loop.loop.events.length) {
+                    if (this.onPatternStart != null) {
+                        this.onPatternStart(unitId);
+                    }
+            
                     idx = 0;
                     loopStart += loop.loop.steps * this.stepLength;
                     this.loopStartTimes[unitId] = loopStart;
+                    if (this.loops[unitId].length > 1) {
+                        this.loops[unitId].splice(0, 1);
+                        loop = this.loops[unitId][0];
+                    }
                 }
             } else {
                 break;
