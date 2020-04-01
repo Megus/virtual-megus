@@ -20,7 +20,7 @@ GBass1.prototype.createLoop = function(pattern) {
     loop.steps = pattern.length;
     for (let c = 0; c < pattern.length; c++) {
         if (pattern[c] != 0) {
-            loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pattern[c], velocity: 0.7}});
+            loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pattern[c], velocity: 0.5}});
         }
     }
 

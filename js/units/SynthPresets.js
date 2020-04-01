@@ -1,7 +1,7 @@
 const synthPresets = {
     // Basses
     'bass': {
-        ampEnvelope: {attack: 0, decay: 0.3, sustain: 0.1, release: 0.6},
+        ampEnvelope: {attack: 0, decay: 0.7, sustain: 0, release: 0},
         filterEnvelope: {attack: 0, decay: 0.2, sustain: 0, release: 0},
         filter: {cutoff: 300, resonance: 1, envelopeLevel: 500, type: 'lowpass'},
         osc: [
@@ -22,6 +22,7 @@ const synthPresets = {
         ]
     },
 
+    // Pads
     'pad': {
         ampEnvelope: {attack: 0.03, decay: 4, sustain: 0, release: 0},
         filterEnvelope: {attack: 0.6, decay: 3, sustain: 0, release: 0},

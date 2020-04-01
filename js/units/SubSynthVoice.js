@@ -1,3 +1,7 @@
+// Single voice of subtractive synths (MonoSynth, PolySynth)
+//
+// 2019, Roman "Megus" Petrov
+
 function SubSynthVoice(context, preset, pitchTable, onStop) {
     this.preset = preset;
     this.pitchTable = pitchTable;
@@ -32,7 +36,7 @@ SubSynthVoice.prototype.startNote = function(time, note) {
         for (let c = 0; c < this.oscBank.length; c++) {
             this.oscBank[c].frequency.setValueAtTime(this.pitchTable[note.pitch + preset.osc[c].pitch], time);
             this.oscBank[c].start(time);
-        }    
+        }
     } catch (e) {}
 
     this.velocity = note.velocity;
