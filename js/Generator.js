@@ -16,14 +16,14 @@ Generator.prototype.start = async function() {
     this.mixer.addChannel(drums);
 
     const kitInfo = [
-        ['/samples/808/808-bass-drum.mp3'], // 0
-        ['/samples/808/808-clap.mp3'], // 1
-        ['/samples/808/808-rim-shot.mp3'], // 2
-        ['/samples/808/808-snare.mp3'], // 3
-        ['/samples/808/808-closed-hat.mp3'], // 4
-        ['/samples/808/808-open-hat.mp3'], // 5
-        ['/samples/808/808-clave.mp3'], // 6
-        ['/samples/808/808-cymbal.mp3'], // 7
+        ['samples/808/808-bass-drum.mp3'], // 0
+        ['samples/808/808-clap.mp3'], // 1
+        ['samples/808/808-rim-shot.mp3'], // 2
+        ['samples/808/808-snare.mp3'], // 3
+        ['samples/808/808-closed-hat.mp3'], // 4
+        ['samples/808/808-open-hat.mp3'], // 5
+        ['samples/808/808-clave.mp3'], // 6
+        ['samples/808/808-cymbal.mp3'], // 7
     ];
 
     await drums.loadKit(kitInfo);
