@@ -8,8 +8,6 @@
 class Sequencer {
     constructor(context) {
         this.context = context;
-        this.loops = {};
-        this.loopStartTimes = {};
 
         this.period = 25.0;
         this.scheduleAhead = 0.1;
@@ -18,7 +16,10 @@ class Sequencer {
         this.onEvent = null;
         this.onPatternStart = null;
 
-        this.isPaused = false;
+        this.loops = {};
+        this.loopStartTimes = {};
+
+        this.isStopped = false;
     }
 
     setBPM(bpm) {
@@ -33,29 +34,25 @@ class Sequencer {
     }
 
     play() {
-        if (this.isPaused) {
-            // Resume after pause
-        } else {
-            // Start over
-            this.step = 0;
-            this.stepTime = this.context.currentTime;
-            this.stepLength = 15.0 / this.bpm; // 60/4, each step is 1/16
+        this.isStopped = false;
+        this.step = 0;
+        this.stepTime = this.context.currentTime;
+        this.stepLength = 15.0 / this.bpm; // 60/4, each step is 1/16
 
-            if (this.onBeat != null) { this.onBeat(this.stepTime, this.step); }
-        }
+        if (this.onBeat != null) { this.onBeat(this.stepTime, this.step); }
 
         this.scheduler();
     }
 
     stop() {
-
-    }
-
-    pause() {
-
+        this.isStopped = true;
+        this.loops = {};
+        this.loopStartTimes = {};
     }
 
     scheduler() {
+        if (this.isStopped) { return; }
+
         const currentTime = this.context.currentTime;
         if (this.onBeat != null && currentTime + this.scheduleAhead >= this.stepTime + this.stepLength) {
             this.onBeat(this.stepTime + this.stepLength, this.step + 1);

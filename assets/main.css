@@ -1,5 +1,94 @@
 body {
   background-color: #111111;
   color: #d3d3d3;
+  max-width: 800px;
+  min-width: 512px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 16px;
+}
+
+h1 {
   text-align: center;
+}
+
+a {
+  color: cyan;
+}
+
+a:visited {
+  color: darkcyan;
+}
+
+.mainButton {
+  width: 128px;
+  height: 128px;
+  border: 0px;
+  outline: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 64px;
+}
+
+#subtitle {
+  color: #888888;
+  font-size: 14px;
+  margin-top: -16px;
+  text-align: center;
+}
+
+.buttonContainer1 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 50%;
+  transition: opacity .3s ease-out;
+}
+
+.buttonContainer1:hover {
+  opacity: 70%;
+}
+
+.buttonContainer2 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0%;
+  transition: opacity .3s ease-out;
+}
+
+.buttonContainer2:hover {
+  opacity: 70%;
+}
+
+
+#playButton {
+  background: url(play-button.png) no-repeat;
+  background-size: cover;
+  left: 192px;
+}
+
+#stopButton {
+  background: url(stop-button.png) no-repeat;
+  background-size: cover;
+  left: 192px;
+  display: none;
+}
+
+#mainContainer {
+  position: relative;
+  width: 512;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#visuals {
+  width: 512px;
+  height: 512px;
 }

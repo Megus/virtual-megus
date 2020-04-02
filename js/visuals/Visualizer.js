@@ -6,9 +6,8 @@
 'use strict';
 
 class Visualizer {
-    constructor(canvasId, sequencer) {
+    constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
-        this.sequencer = sequencer;
         this.events = [];
 
         this.dotColors = [
@@ -22,8 +21,6 @@ class Visualizer {
             '#ffff00',
         ];
 
-        sequencer.onBeat = this.onBeat.bind(this);
-        sequencer.onEvent = this.onEvent.bind(this);
 
         this.draw = this.draw.bind(this);
 
@@ -31,6 +28,13 @@ class Visualizer {
         this.initNoteVisuals();
 
         window.requestAnimationFrame(this.draw);
+    }
+
+    setSequencer(sequencer) {
+        this.sequencer = sequencer;
+        sequencer.onBeat = this.onBeat.bind(this);
+        sequencer.onEvent = this.onEvent.bind(this);
+        this.lastTime = null;
     }
 
     // Sequencer events
@@ -43,8 +47,11 @@ class Visualizer {
     }
 
     // Main drawing function
-    draw() {
-        const currentTime = this.sequencer.context.currentTime;
+    draw(drawTime) {
+        let currentTime = drawTime;
+        if (this.sequencer != null) {
+            currentTime = this.sequencer.context.currentTime;
+        }
         if (this.lastTime == null) { this.lastTime = currentTime; }
         const timeDiff = currentTime - this.lastTime;
         this.lastTime = currentTime;
