@@ -1,56 +1,62 @@
-let _drumMachineId = 0;
+// Drum Machine Unit
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
 
-function DrumMachine(context) {
-    this.id = 'drummach' + (_drumMachineId++);
+'use strict';
 
-    this.context = context;
-    this.kit = [];
-    this.settings = {
-        gain: 1,
-    };
+class DrumMachine extends Unit {
+    constructor(context) {
+        super(context, "drummach");
 
-    this.gainNode = context.createGain();
-    this.gainNode.gain.value = this.settings.gain;
+        this.kit = [];
+        this.settings = {
+            gain: 1,
+        };
 
-    this.output = this.gainNode;
-}
+        this.gainNode = context.createGain();
+        this.gainNode.gain.value = this.settings.gain;
 
-DrumMachine.prototype.loadKit = async function(kitInfo) {
-    this.kit = [];
-    for (let c = 0; c < kitInfo.length; c++) {
-        const sampleSet = kitInfo[c];
-        let instrument = [];
-        for (let d = 0; d < sampleSet.length; d++) {
-            const response = await fetch(sampleSet[d]);
-            const arrayBuffer = await response.arrayBuffer();
-            const audioBuffer = await this.context.decodeAudioData(arrayBuffer);
-            instrument.push(audioBuffer);
+        this.output = this.gainNode;
+    }
+
+    async loadKit(kitInfo) {
+        this.kit = [];
+        for (let c = 0; c < kitInfo.length; c++) {
+            const sampleSet = kitInfo[c];
+            let instrument = [];
+            for (let d = 0; d < sampleSet.length; d++) {
+                const response = await fetch(sampleSet[d]);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await this.context.decodeAudioData(arrayBuffer);
+                instrument.push(audioBuffer);
+            }
+            this.kit.push(instrument);
         }
-        this.kit.push(instrument);
-    }
-}
-
-DrumMachine.prototype.startNote = function(time, note) {
-    const pitch = note.pitch;
-    const instrumentIdx = Math.floor(pitch / 12);
-    const sampleIdx = pitch % 12;
-
-    if (instrumentIdx >= this.kit.length || sampleIdx >= this.kit[instrumentIdx].length) {
-        return
     }
 
-    const sampleNode = this.context.createBufferSource();
-    const ampNode = this.context.createGain();
+    startNote(time, note) {
+        const pitch = note.pitch;
+        const instrumentIdx = Math.floor(pitch / 12);
+        const sampleIdx = pitch % 12;
 
-    ampNode.gain.value = note.velocity;
+        if (instrumentIdx >= this.kit.length || sampleIdx >= this.kit[instrumentIdx].length) {
+            return
+        }
 
-    sampleNode.buffer = this.kit[instrumentIdx][sampleIdx];
+        const sampleNode = this.context.createBufferSource();
+        const ampNode = this.context.createGain();
 
-    sampleNode.connect(ampNode);
-    ampNode.connect(this.gainNode);
-    sampleNode.start(time);    
-}
+        ampNode.gain.value = note.velocity;
 
-DrumMachine.prototype.stopNote = function(time, note) {
+        sampleNode.buffer = this.kit[instrumentIdx][sampleIdx];
 
+        sampleNode.connect(ampNode);
+        ampNode.connect(this.gainNode);
+        sampleNode.start(time);
+    }
+
+    stopNote(time, note) {
+
+    }
 }

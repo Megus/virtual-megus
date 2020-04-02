@@ -1,41 +1,50 @@
-let _monoSynthId = 0;
+// Monophonic Subtractive Synth Unit
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
 
-function MonoSynth(context, pitchTable, preset) {
-    this.id = 'monosynt' + (_monoSynthId++);
+'use strict';
 
-    this.pitchTable = pitchTable;
-    this.context = context;
-    this.voicePreset = preset;
+class MonoSynth extends Unit {
+    constructor(context, pitchTable, preset) {
+        super(context, "monosynt");
 
-    this.gain = 1;
-    this.voices = [];
+        this.pitchTable = pitchTable;
+        this.voicePreset = preset;
 
-    this.gainNode = context.createGain();
-    this.gainNode.gain.value = this.gain;
+        this.gain = 1;
+        this.voices = [];
 
-    this.output = this.gainNode;
-}
+        this.gainNode = context.createGain();
+        this.gainNode.gain.value = this.gain;
 
-// Note: {pitch: ..., velocity: ...}
-MonoSynth.prototype.startNote = function(time, note) {
-    this.shutNote(time);
-    const voice = new SubSynthVoice(this.context, this.voicePreset, this.pitchTable, this.onVoiceStop.bind(this));
-    this.voices.push(voice);
-    voice.output.connect(this.gainNode);
-    voice.startNote(time, note);
-}
+        this.output = this.gainNode;
+    }
 
-MonoSynth.prototype.stopNote = function(time, note) {
-    this.voices.forEach((v) => v.stopNote(time, note));
-}
+    // Note: {pitch: ..., velocity: ...}
+    startNote(time, note) {
+        this.shutNote(time);
+        const voice = new SubSynthVoice(this);
+        this.voices.push(voice);
+        voice.output.connect(this.gainNode);
+        voice.startNote(time, note);
+    }
 
-MonoSynth.prototype.shutNote = function(time) {
-    this.voices.forEach((v) => v.shutNote(time));
-}
+    stopNote(time, note) {
+        this.voices.forEach((v) => v.stopNote(time, note));
+    }
 
-MonoSynth.prototype.onVoiceStop = function(voice) {
-    const idx = this.voices.indexOf(voice);
-    if (idx != -1) {
-        this.voices.splice(idx, 1);
+    shutNote(time) {
+        this.voices.forEach((v) => v.shutNote(time));
+    }
+
+    // Called by SubSynthVoice
+    onVoiceStop(voice) {
+        const idx = this.voices.indexOf(voice);
+        if (idx != -1) {
+            this.voices.splice(idx, 1);
+        }
     }
 }
+
+

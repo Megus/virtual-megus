@@ -1,3 +1,8 @@
+// Equal-tempered pitch table generator function
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
+
 'use strict';
 
 function createPitchTable(A4Freq) {

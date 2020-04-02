@@ -1,66 +1,74 @@
 // Single voice of subtractive synths (MonoSynth, PolySynth)
 //
-// 2019, Roman "Megus" Petrov
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
 
-function SubSynthVoice(context, preset, pitchTable, onStop) {
-    this.preset = preset;
-    this.pitchTable = pitchTable;
+'use strict';
 
-    this.filterNode = context.createBiquadFilter();
-    this.filterNode.type = preset.filter.type;
-    this.filterNode.Q.value = preset.filter.resonance;
+class SubSynthVoice {
+    constructor(unit) {
+        this.unit = unit;
 
-    this.gainNode = context.createGain();
-    this.filterNode.connect(this.gainNode);
+        const preset = unit.voicePreset;
+        const context = unit.context;
 
-    this.oscBank = [];
-    for (let c = 0; c < preset.osc.length; c++) {
-        const osc = context.createOscillator();
-        osc.type = preset.osc[c].type;
-        osc.detune.value = preset.osc[c].detune;
-        const oscGain = context.createGain();
-        oscGain.gain.value = preset.osc[c].level;
-        osc.connect(oscGain);
-        oscGain.connect(this.filterNode);
-        this.oscBank.push(osc);
-    }
-    this.oscBank[0].onended = () => onStop(this);
+        this.filterNode = context.createBiquadFilter();
+        this.filterNode.type = preset.filter.type;
+        this.filterNode.Q.value = preset.filter.resonance;
 
-    this.output = this.gainNode;
-}
+        this.gainNode = context.createGain();
+        this.filterNode.connect(this.gainNode);
 
-SubSynthVoice.prototype.startNote = function(time, note) {
-    const preset = this.preset;
-
-    try {
-        for (let c = 0; c < this.oscBank.length; c++) {
-            this.oscBank[c].frequency.setValueAtTime(this.pitchTable[note.pitch + preset.osc[c].pitch], time);
-            this.oscBank[c].start(time);
+        this.oscBank = [];
+        for (let c = 0; c < preset.osc.length; c++) {
+            const osc = context.createOscillator();
+            osc.type = preset.osc[c].type;
+            osc.detune.value = preset.osc[c].detune;
+            const oscGain = context.createGain();
+            oscGain.gain.value = preset.osc[c].level;
+            osc.connect(oscGain);
+            oscGain.connect(this.filterNode);
+            this.oscBank.push(osc);
         }
-    } catch (e) {}
+        this.oscBank[0].onended = () => unit.onVoiceStop(this);
 
-    this.velocity = note.velocity;
-
-    applyEnvelopeADS(time, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
-    applyEnvelopeADS(time, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
-
-    if (preset.ampEnvelope.sustain == 0) {
-        this.shutNote(time + preset.ampEnvelope.attack + preset.ampEnvelope.decay);
+        this.output = this.gainNode;
     }
-}
 
-SubSynthVoice.prototype.stopNote = function(time) {
-    const preset = this.preset;
+    startNote(time, note) {
+        const preset = this.unit.voicePreset;
 
-    applyEnvelopeR(time, preset.ampEnvelope, this.gainNode.gain, 0, this.velocity);
-    applyEnvelopeR(time, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
-    this.shutNote(time + preset.ampEnvelope.release);
-}
-
-SubSynthVoice.prototype.shutNote = function(time) {
-    for (let c = 0; c < this.oscBank.length; c++) {
         try {
-            this.oscBank[c].stop(time);
+            for (let c = 0; c < this.oscBank.length; c++) {
+                this.oscBank[c].frequency.setValueAtTime(this.unit.pitchTable[note.pitch + preset.osc[c].pitch], time);
+                this.oscBank[c].start(time);
+            }
         } catch (e) {}
+
+        this.velocity = note.velocity;
+
+        this.unit.applyEnvelopeADS(time, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
+        this.unit.applyEnvelopeADS(time, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
+
+        if (preset.ampEnvelope.sustain == 0) {
+            this.shutNote(time + preset.ampEnvelope.attack + preset.ampEnvelope.decay);
+        }
+
+    }
+
+    stopNote(time) {
+        const preset = this.unit.voicePreset;
+
+        this.unit.applyEnvelopeR(time, preset.ampEnvelope, this.gainNode.gain, 0, this.velocity);
+        this.unit.applyEnvelopeR(time, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
+        this.shutNote(time + preset.ampEnvelope.release);
+    }
+
+    shutNote(time) {
+        for (let c = 0; c < this.oscBank.length; c++) {
+            try {
+                this.oscBank[c].stop(time);
+            } catch (e) {}
+        }
     }
 }

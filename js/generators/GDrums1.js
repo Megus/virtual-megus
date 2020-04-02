@@ -1,13 +1,9 @@
-function GDrums1(sequencer, mixer, unit) {
-    this.sequencer = sequencer;
-    this.mixer = mixer;
-    this.unit = unit;
+// Simple drum pattern generator
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
 
-    this.prepareMutations(patternTemplate);
-    this.pattern = this.createInitialPattern();
-    const loop = this.createLoop(this.pattern);
-    sequencer.addLoop(this.unit, loop);
-}
+'use strict';
 
 const instrumentMappings = {
     kick: 0,
@@ -53,87 +49,101 @@ const patternTemplate = {
     },
 }
 
-GDrums1.prototype.createInitialPattern = function() {
-    const pattern = {
-        kick:       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        clap:       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        rimShot:    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        snare:      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        closedHat:  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        openHat:    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        clave:      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        cymbal:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    };
 
-    for (let c = 0; c < 32; c++) {
-        this.mutatePattern(pattern);
+class GDrums1 {
+    constructor(sequencer, mixer, unit) {
+        this.sequencer = sequencer;
+        this.mixer = mixer;
+        this.unit = unit;
+
+        this.prepareMutations(patternTemplate);
+        this.pattern = this.createInitialPattern();
+        const loop = this.createLoop(this.pattern);
+        sequencer.addLoop(this.unit, loop);
     }
 
-    return pattern;
-}
+    createInitialPattern() {
+        const pattern = {
+            kick:       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            clap:       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            rimShot:    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            snare:      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            closedHat:  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            openHat:    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            clave:      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            cymbal:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        };
 
-GDrums1.prototype.createLoop = function(pattern) {
-    const loop = {
-        events: [],
+        for (let c = 0; c < 32; c++) {
+            this.mutatePattern(pattern);
+        }
+
+        return pattern;
     }
-    for (let instrument in pattern) {
-        const hits = pattern[instrument];
-        loop.steps = hits.length;
-        for (let c = 0; c < hits.length; c++) {
-            if (hits[c] != 0) {
-                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: instrumentMappings[instrument], velocity: hits[c]}});
+
+    createLoop(pattern) {
+        const loop = {
+            events: [],
+        }
+        for (let instrument in pattern) {
+            const hits = pattern[instrument];
+            loop.steps = hits.length;
+            for (let c = 0; c < hits.length; c++) {
+                if (hits[c] != 0) {
+                    loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: instrumentMappings[instrument], velocity: hits[c]}});
+                }
+            }
+        }
+        loop.events.sort((a, b) => a.time - b.time);
+        return loop;
+    }
+
+    prepareMutations(template) {
+        this.partDistribution = [];
+        this.partStepOnDistribution = {};
+        this.partStepOffDistribution = {};
+        for (const partName in template) {
+            const part = template[partName];
+            for (let c = 0; c < part.weight; c++) {
+                this.partDistribution.push(partName);
+
+                const offDistribution = [];
+                const onDistribution = [];
+                for (let d = 0; d < part.on.length; d++) {
+                    for (let e = 0; e < part.on[d]; e++) {
+                        onDistribution.push(d);
+                    }
+                    for (let e = 0; e < part.off[d]; e++) {
+                        offDistribution.push(d);
+                    }
+                }
+
+                this.partStepOnDistribution[partName] = onDistribution;
+                this.partStepOffDistribution[partName] = offDistribution;
             }
         }
     }
-    loop.events.sort((a, b) => a.time - b.time);
-    return loop;
-}
 
-GDrums1.prototype.prepareMutations = function(template) {
-    this.partDistribution = [];
-    this.partStepOnDistribution = {};
-    this.partStepOffDistribution = {};
-    for (const partName in template) {
-        const part = template[partName];
-        for (let c = 0; c < part.weight; c++) {
-            this.partDistribution.push(partName);
+    mutatePattern(pattern) {
+        // Pick part for mutation
+        const partName = this.partDistribution[Math.floor(Math.random() * this.partDistribution.length)];
 
-            const offDistribution = [];
-            const onDistribution = [];
-            for (let d = 0; d < part.on.length; d++) {
-                for (let e = 0; e < part.on[d]; e++) {
-                    onDistribution.push(d);
-                }
-                for (let e = 0; e < part.off[d]; e++) {
-                    offDistribution.push(d);
-                }
-            }
+        // Off a note
+        let step = this.partStepOffDistribution[partName][Math.floor(Math.random() * this.partStepOffDistribution[partName].length)];
+        pattern[partName][step] = 0;
 
-            this.partStepOnDistribution[partName] = onDistribution;
-            this.partStepOffDistribution[partName] = offDistribution;
+        // On a note
+        step = this.partStepOnDistribution[partName][Math.floor(Math.random() * this.partStepOnDistribution[partName].length)];
+        pattern[partName][step] = 1;
+    }
+
+    nextPattern() {
+        const mutations = 4 + Math.floor(Math.random() * 4);
+        for (let c = 0; c < mutations; c++) {
+            this.mutatePattern(this.pattern);
         }
+
+        const loop = this.createLoop(this.pattern);
+        this.sequencer.addLoop(this.unit, loop);
     }
-}
-
-GDrums1.prototype.mutatePattern = function(pattern) {
-    // Pick part for mutation
-    const partName = this.partDistribution[Math.floor(Math.random() * this.partDistribution.length)];
-
-    // Off a note
-    let step = this.partStepOffDistribution[partName][Math.floor(Math.random() * this.partStepOffDistribution[partName].length)];
-    pattern[partName][step] = 0;
-
-    // On a note
-    step = this.partStepOnDistribution[partName][Math.floor(Math.random() * this.partStepOnDistribution[partName].length)];
-    pattern[partName][step] = 1;
-}
-
-GDrums1.prototype.nextPattern = function() {
-    const mutations = 4 + Math.floor(Math.random() * 4);
-    for (let c = 0; c < mutations; c++) {
-        this.mutatePattern(this.pattern);
-    }
-
-    const loop = this.createLoop(this.pattern);
-    this.sequencer.addLoop(this.unit, loop);
 }

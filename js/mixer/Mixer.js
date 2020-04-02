@@ -1,22 +1,29 @@
+// Mixer
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
+
 'use strict';
 
-function Mixer() {
-    try {
-        // Get context
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.context = new AudioContext();
+class Mixer {
+    constructor() {
+        try {
+            // Get context
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.context = new AudioContext();
 
-        this.channels = [];
+            this.channels = [];
+        }
+        catch (e) {
+            alert(e);
+            //alert('Web Audio API is not supported in this browser');
+        }
     }
-    catch (e) {
-        alert(e);
-        //alert('Web Audio API is not supported in this browser');
-    }
-}
 
-Mixer.prototype.addChannel = function (unit) {
-    const channel = new MixerChannel(unit);
-    channel.output.connect(this.context.destination);
-    this.channels.push(channel);
-    return channel;
+    addChannel(unit) {
+        const channel = new MixerChannel(unit);
+        channel.output.connect(this.context.destination);
+        this.channels.push(channel);
+        return channel;
+    }
 }

@@ -1,12 +1,16 @@
 <html>
 <head>
+    <link rel="icon" href="assets/favicon-96x96.png">
+    <link rel="stylesheet" href="assets/main.css">
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    
+
     <script type="text/javascript" src="js/mixer/Mixer.js"></script>
     <script type="text/javascript" src="js/mixer/MixerChannel.js"></script>
 
     <script type="text/javascript" src="js/units/SynthPresets.js"></script>
     <script type="text/javascript" src="js/units/SubSynthVoice.js"></script>
+    <script type="text/javascript" src="js/units/Unit.js"></script>
     <script type="text/javascript" src="js/units/MonoSynth.js"></script>
     <script type="text/javascript" src="js/units/PolySynth.js"></script>
     <script type="text/javascript" src="js/units/DrumMachine.js"></script>
@@ -16,10 +20,10 @@
 
     <script type="text/javascript" src="js/visuals/Visualizer.js"></script>
 
-    <script type="text/javascript" src="js/helpers.js"></script>
     <script type="text/javascript" src="js/PitchTable.js"></script>
     <script type="text/javascript" src="js/Sequencer.js"></script>
     <script type="text/javascript" src="js/Generator.js"></script>
+
     <script type="text/javascript">
         function defaultFocus() {
             document.getElementById("startButton").focus();
@@ -33,7 +37,17 @@
     </script>
 </head>
 <body onload="defaultFocus()">
+    <h1>Virtual Megus</h1>
+    <p>An experiment with procedural music</p>
     <button id="startButton" onclick="start();">Start</button><br />
     <canvas id="visuals" width="1024" height="1024" style="width: 512px; height: 512px;"></canvas>
+    <p>
+        For years I wanted to experiment with procedural music. In August 2019 I decided that the time has come.
+        I also wanted to learn WebAudio API, that's why it runs in a browser (Google Chrome only now, I may add support for other browsers in the future).
+    </p>
+    <p>
+        My goal is to create a system, which can play infinite electronic music.
+        I'm not into abstract noises, so I'm trying to achieve pleasant to listen results.
+    </p>
 </body>
 </html>

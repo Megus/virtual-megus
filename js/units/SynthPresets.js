@@ -1,3 +1,10 @@
+// Some synth presets
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
+
+'use strict';
+
 const synthPresets = {
     // Basses
     'bass': {

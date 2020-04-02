@@ -1,41 +1,47 @@
-let _polySynthId = 0;
+// Polyphonic Subtractive Synth Unit
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
 
-function PolySynth(context, pitchTable, preset) {
-    this.id = 'polysynt' + (_polySynthId++);
+'use strict';
 
-    this.pitchTable = pitchTable;
-    this.context = context;
-    this.voicePreset = preset;
+class PolySynth extends Unit {
+    constructor(context, pitchTable, preset) {
+        super(context, "polysynt");
 
-    this.gain = 1;
-    this.voices = {};
+        this.pitchTable = pitchTable;
+        this.voicePreset = preset;
 
-    this.gainNode = context.createGain();
-    this.gainNode.gain.value = this.gain;
+        this.gain = 1;
+        this.voices = {};
 
-    this.output = this.gainNode;
-}
+        this.gainNode = context.createGain();
+        this.gainNode.gain.value = this.gain;
 
-PolySynth.prototype.startNote = function(time, note) {
-    const voice = new SubSynthVoice(this.context, this.voicePreset, this.pitchTable, this.onVoiceStop.bind(this));
-    this.stopNote(time, note);
-    this.voices[note.pitch] = voice;
-    voice.output.connect(this.gainNode);
-    voice.startNote(time, note);
-
-}
-
-PolySynth.prototype.stopNote = function(time, note) {
-    if (this.voices[note.pitch] != null) {
-        this.voices[note.pitch].stopNote(time);
+        this.output = this.gainNode;
     }
-}
 
-PolySynth.prototype.onVoiceStop = function(voice) {
-    for (let pitch in this.voices) {
-        if (this.voices[pitch] === voice) {
-            this.voices[pitch] = null;
-            break;
+    startNote(time, note) {
+        const voice = new SubSynthVoice(this);
+        this.stopNote(time, note);
+        this.voices[note.pitch] = voice;
+        voice.output.connect(this.gainNode);
+        voice.startNote(time, note);
+
+    }
+
+    stopNote(time, note) {
+        if (this.voices[note.pitch] != null) {
+            this.voices[note.pitch].stopNote(time);
+        }
+    }
+
+    onVoiceStop(voice) {
+        for (let pitch in this.voices) {
+            if (this.voices[pitch] === voice) {
+                this.voices[pitch] = null;
+                break;
+            }
         }
     }
 }
