@@ -7,9 +7,8 @@
 
 class PolySynth extends Unit {
     constructor(context, pitchTable, preset) {
-        super(context, "polysynt");
+        super(context, pitchTable, "polysynt");
 
-        this.pitchTable = pitchTable;
         this.voicePreset = preset;
 
         this.gain = 1;

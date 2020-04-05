@@ -9,8 +9,8 @@ class Sequencer {
     constructor(context) {
         this.context = context;
 
-        this.period = 25.0;
-        this.scheduleAhead = 0.1;
+        this.period = 25.0; // ms
+        this.scheduleAhead = 0.1; // s
 
         this.onBeat = null;
         this.onEvent = null;

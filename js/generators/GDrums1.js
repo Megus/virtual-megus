@@ -51,15 +51,8 @@ const patternTemplate = {
 
 
 class GDrums1 {
-    constructor(sequencer, mixer, unit) {
-        this.sequencer = sequencer;
-        this.mixer = mixer;
-        this.unit = unit;
-
+    constructor() {
         this.prepareMutations(patternTemplate);
-        this.pattern = this.createInitialPattern();
-        const loop = this.createLoop(this.pattern);
-        sequencer.addLoop(this.unit, loop);
     }
 
     createInitialPattern() {
@@ -137,13 +130,16 @@ class GDrums1 {
         pattern[partName][step] = 1;
     }
 
-    nextPattern() {
-        const mutations = 4 + Math.floor(Math.random() * 4);
-        for (let c = 0; c < mutations; c++) {
-            this.mutatePattern(this.pattern);
+    nextLoop() {
+        if (this.pattern == null) {
+            this.pattern = this.createInitialPattern();
+        } else {
+            const mutations = 4 + Math.floor(Math.random() * 4);
+            for (let c = 0; c < mutations; c++) {
+                this.mutatePattern(this.pattern);
+            }
         }
 
-        const loop = this.createLoop(this.pattern);
-        this.sequencer.addLoop(this.unit, loop);
+        return this.createLoop(this.pattern);
     }
 }

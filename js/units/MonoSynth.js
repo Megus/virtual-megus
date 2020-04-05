@@ -6,10 +6,15 @@
 'use strict';
 
 class MonoSynth extends Unit {
+    /**
+     *
+     * @param {AudioContext} context
+     * @param {Array} pitchTable
+     * @param {Object} preset
+     */
     constructor(context, pitchTable, preset) {
-        super(context, "monosynt");
+        super(context, pitchTable, "monosynt");
 
-        this.pitchTable = pitchTable;
         this.voicePreset = preset;
 
         this.gain = 1;

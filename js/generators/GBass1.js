@@ -6,18 +6,12 @@
 'use strict';
 
 class GBass1 {
-    constructor(sequencer, mixer, unit) {
-        this.sequencer = sequencer;
-        this.mixer = mixer;
-        this.unit = unit;
-
+    constructor() {
         this.pattern = this.createInitialPattern();
-        const loop = this.createLoop(this.pattern);
-        sequencer.addLoop(this.unit, loop);
     }
 
     createInitialPattern() {
-        const pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        const pattern = [24,0,0,0,24,0,0,0,24,0,0,0,24,0,0,0];
         return pattern;
     }
 
@@ -40,11 +34,10 @@ class GBass1 {
         return loop;
     }
 
-    nextPattern() {
+    nextLoop() {
         const step = Math.floor(Math.random() * 16);
         this.pattern[step] = this.pattern[step] != 0 ? 0 : Math.floor(Math.random() * 2) * 12 + 24;
-        const loop = this.createLoop(this.pattern);
-        this.sequencer.addLoop(this.unit, loop);
+        return this.createLoop(this.pattern);
     }
 }
 

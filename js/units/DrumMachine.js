@@ -7,7 +7,7 @@
 
 class DrumMachine extends Unit {
     constructor(context) {
-        super(context, "drummach");
+        super(context, [], "drummach");
 
         this.kit = [];
         this.settings = {

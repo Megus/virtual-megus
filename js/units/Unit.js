@@ -6,8 +6,16 @@
 let _unitId = 0;
 
 class Unit {
-    constructor(context, typeString) {
+    /**
+     * Default Unit constructor
+     *
+     * @param {AudioContect} context
+     * @param {Array} pitchTable
+     * @param {String} typeString
+     */
+    constructor(context, pitchTable, typeString) {
         this.context = context;
+        this.pitchTable = pitchTable;
         this.id = typeString  + (_unitId++);
     }
 
