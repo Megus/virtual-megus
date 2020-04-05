@@ -8,11 +8,6 @@
 class Conductor1 extends Conductor {
     constructor(mixer, sequencer, pitchTable) {
         super(mixer, sequencer, pitchTable);
-
-        this.key = 4; // E
-        this.scale = 5; // Minor scale
-        this.scalePitches = this.generateDiatonicScalePitches(this.key, this.scale);
-        console.log(this.scalePitches);
     }
 
     async setupEnsemble() {
@@ -47,17 +42,25 @@ class Conductor1 extends Conductor {
             [this.drums.id]: this.drums,
             [this.bass.id]: this.bass,
         };
+        this.patternStep = 0;
 
         // Prepare sequencer
         this.sequencer.setBPM(120);
         this.sequencer.onPatternStart = (unitId) => {
-            const newLoop = this.generators[unitId].nextLoop();
+            if (this.sequencer.step > this.patternStep) {
+                this.patternStep += 16;
+                this.nextState();
+            }
+
+            const newLoop = this.generators[unitId].nextLoop(this.state);
             this.sequencer.addLoop(this.units[unitId], newLoop);
         };
 
         // Add first loops
+        this.initState();
+
         for (const unitId in this.units) {
-            this.sequencer.addLoop(this.units[unitId], this.generators[unitId].nextLoop());
+            this.sequencer.addLoop(this.units[unitId], this.generators[unitId].nextLoop(this.state));
         }
 
         this.sequencer.play();
@@ -65,5 +68,20 @@ class Conductor1 extends Conductor {
 
     stop() {
         this.sequencer.stop();
+    }
+
+    initState() {
+        this.state = {
+            key: 4,     // E
+            scale: 5,   // Minor
+            chord: 8,   // Starting with root/tonic
+        };
+        this.state.scalePitches = this.generateDiatonicScalePitches(this.state.key, this.state.scale);
+    }
+
+    nextState() {
+        const progression = [6, 7, 8, 7];
+
+        this.state.chord = progression[Math.floor(this.patternStep / 16) % 4];
     }
 }

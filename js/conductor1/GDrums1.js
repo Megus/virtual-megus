@@ -130,7 +130,7 @@ class GDrums1 {
         pattern[partName][step] = 1;
     }
 
-    nextLoop() {
+    nextLoop(state) {
         if (this.pattern == null) {
             this.pattern = this.createInitialPattern();
         } else {

@@ -11,18 +11,20 @@ class GBass1 {
     }
 
     createInitialPattern() {
-        const pattern = [24,0,0,0,24,0,0,0,24,0,0,0,24,0,0,0];
+        const pattern = [0, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1];
         return pattern;
     }
 
-    createLoop(pattern) {
+    createLoop(pattern, state) {
         const loop = {
             events: [],
         }
         loop.steps = pattern.length;
         for (let c = 0; c < pattern.length; c++) {
-            if (pattern[c] != 0) {
-                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pattern[c], velocity: 0.5}});
+            const step = pattern[c];
+            if (step != -1) {
+                const pitch = state.scalePitches[state.chord + step];
+                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pitch, velocity: 0.5}});
             }
         }
 
@@ -34,10 +36,10 @@ class GBass1 {
         return loop;
     }
 
-    nextLoop() {
+    nextLoop(state) {
         const step = Math.floor(Math.random() * 16);
-        this.pattern[step] = this.pattern[step] != 0 ? 0 : Math.floor(Math.random() * 2) * 12 + 24;
-        return this.createLoop(this.pattern);
+        this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 2) * 7) : -1;
+        return this.createLoop(this.pattern, state);
     }
 }
 
