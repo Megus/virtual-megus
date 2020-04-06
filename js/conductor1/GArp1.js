@@ -18,7 +18,7 @@ class GArp1 {
         for (let c = 0; c < pattern.length; c++) {
             const step = pattern[c];
             if (step != -1) {
-                const pitch = state.scalePitches[state.chord + step + 21];
+                const pitch = state.scalePitches[state.chord + step + 28];
                 loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pitch, velocity: 0.5}});
             }
         }

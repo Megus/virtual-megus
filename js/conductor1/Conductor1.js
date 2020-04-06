@@ -74,17 +74,21 @@ class Conductor1 extends Conductor {
 
     initState() {
         this.state = {
-            key: 0,     // E
-            scale: 5,   // Minor
-            chord: 7,   // Starting with root/tonic
+            key: 4,     // E
+            scale: 1,   // Minor
+            chord: 0,   // Starting with root/tonic
         };
         this.state.scalePitches = this.generateDiatonicScalePitches(this.state.key, this.state.scale);
-        console.log(this.state.scalePitches);
     }
 
     nextState() {
-        const progression = [5, 6, 7, 6];
+        //const progression = [5, 6, 7, 6];
 
-        this.state.chord = progression[Math.floor(this.patternStep / 16) % 4];
+        //this.state.chord = progression[Math.floor(this.patternStep / 16) % 4];
+        let newChord = Math.floor(Math.random() * 6);
+        if (newChord == (13 - this.state.scale) % 7) {
+            newChord++;
+        }
+        this.state.chord = newChord;
     }
 }
