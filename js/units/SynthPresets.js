@@ -31,7 +31,7 @@ const synthPresets = {
 
     // Pads
     'pad': {
-        ampEnvelope: {attack: 0.03, decay: 4, sustain: 0, release: 0},
+        ampEnvelope: {attack: 0, decay: 4, sustain: 0, release: 0},
         filterEnvelope: {attack: 0.6, decay: 3, sustain: 0, release: 0},
         filter: {cutoff: 600, resonance: 2, envelopeLevel: 1200, type: 'highpass'},
         osc: [

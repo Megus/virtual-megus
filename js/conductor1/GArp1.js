@@ -1,17 +1,12 @@
-// Simple bass line generator
-//
-// Virtual Megus
-// 2019-2020, Roman "Megus" Petrov
-
 'use strict';
 
-class GBass1 {
+class GArp1 {
     constructor() {
         this.pattern = this.createInitialPattern();
     }
 
     createInitialPattern() {
-        const pattern = [0, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1];
+        const pattern = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
         return pattern;
     }
 
@@ -23,8 +18,8 @@ class GBass1 {
         for (let c = 0; c < pattern.length; c++) {
             const step = pattern[c];
             if (step != -1) {
-                const pitch = state.scalePitches[state.chord + step];
-                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pitch, velocity: 0.7}});
+                const pitch = state.scalePitches[state.chord + step + 21];
+                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pitch, velocity: 0.5}});
             }
         }
 
@@ -38,8 +33,7 @@ class GBass1 {
 
     nextLoop(state) {
         const step = Math.floor(Math.random() * 16);
-        this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 2) * 7) : -1;
+        this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 3) * 2) : -1;
         return this.createLoop(this.pattern, state);
     }
 }
-

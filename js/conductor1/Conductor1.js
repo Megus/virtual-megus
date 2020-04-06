@@ -37,10 +37,12 @@ class Conductor1 extends Conductor {
         this.generators = {
             [this.drums.id]: new GDrums1(),
             [this.bass.id]: new GBass1(),
+            [this.synth.id]: new GArp1(),
         };
         this.units = {
             [this.drums.id]: this.drums,
             [this.bass.id]: this.bass,
+            [this.synth.id]: this.synth,
         };
         this.patternStep = 0;
 
@@ -72,15 +74,16 @@ class Conductor1 extends Conductor {
 
     initState() {
         this.state = {
-            key: 4,     // E
+            key: 0,     // E
             scale: 5,   // Minor
-            chord: 8,   // Starting with root/tonic
+            chord: 7,   // Starting with root/tonic
         };
         this.state.scalePitches = this.generateDiatonicScalePitches(this.state.key, this.state.scale);
+        console.log(this.state.scalePitches);
     }
 
     nextState() {
-        const progression = [6, 7, 8, 7];
+        const progression = [5, 6, 7, 6];
 
         this.state.chord = progression[Math.floor(this.patternStep / 16) % 4];
     }
