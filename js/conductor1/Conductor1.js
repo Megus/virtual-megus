@@ -74,8 +74,8 @@ class Conductor1 extends Conductor {
 
     initState() {
         this.state = {
-            key: 4,     // E
-            scale: 1,   // Minor
+            key: 0,     // C
+            scale: 1,   // Dorian
             chord: 0,   // Starting with root/tonic
         };
         this.state.scalePitches = this.generateDiatonicScalePitches(this.state.key, this.state.scale);
