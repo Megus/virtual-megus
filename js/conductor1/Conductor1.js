@@ -8,16 +8,19 @@
 class Conductor1 extends Conductor {
     constructor(mixer, sequencer, pitchTable) {
         super(mixer, sequencer, pitchTable);
+        this.generators = {};
+        this.generatorConstructors = {};
+        this.units = {};
+    }
+
+    addUnit(unit, generatorConstructor) {
+        this.mixer.addChannel(unit);
+        this.units[unit.id] = unit;
+        this.generatorConstructors[unit.id] = generatorConstructor;
     }
 
     async setupEnsemble() {
-        this.bass = new MonoSynth(this.mixer.context, this.pitchTable, synthPresets['bass']);
-        this.synth = new PolySynth(this.mixer.context, this.pitchTable, synthPresets['pad']);
-        this.drums = new DrumMachine(this.mixer.context);
-
-        this.mixer.addChannel(this.bass);
-        this.mixer.addChannel(this.synth);
-        this.mixer.addChannel(this.drums);
+        const drums = new DrumMachine(this.mixer.context);
 
         const kitInfo = [
             ['samples/808/808-bass-drum.mp3'], // 0
@@ -30,27 +33,27 @@ class Conductor1 extends Conductor {
             ['samples/808/808-cymbal.mp3'], // 7
         ];
 
-        await this.drums.loadKit(kitInfo);
+        await drums.loadKit(kitInfo);
+
+        this.addUnit(drums, GDrums1);
+        this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1);
+        this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["pad"]), GPad1);
+        this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1);
     }
 
     play() {
-        this.generators = {
-            [this.drums.id]: new GDrums1(),
-            [this.bass.id]: new GBass1(),
-            [this.synth.id]: new GArp1(),
-        };
-        this.units = {
-            [this.drums.id]: this.drums,
-            [this.bass.id]: this.bass,
-            [this.synth.id]: this.synth,
-        };
+        for (const unitId in this.units) {
+            this.generators[unitId] = new this.generatorConstructors[unitId];
+        }
+
         this.patternStep = 0;
 
         // Prepare sequencer
         this.sequencer.setBPM(120);
         this.sequencer.onPatternStart = (unitId) => {
-            if (this.sequencer.step > this.patternStep) {
+            if (this.sequencer.step >= this.patternStep) {
                 this.patternStep += 16;
+                console.log(this.patternStep);
                 this.nextState();
             }
 
@@ -75,16 +78,13 @@ class Conductor1 extends Conductor {
     initState() {
         this.state = {
             key: 0,     // C
-            scale: 1,   // Dorian
+            scale: 5,   // Minor
             chord: 0,   // Starting with root/tonic
         };
         this.state.scalePitches = this.generateDiatonicScalePitches(this.state.key, this.state.scale);
     }
 
     nextState() {
-        //const progression = [5, 6, 7, 6];
-
-        //this.state.chord = progression[Math.floor(this.patternStep / 16) % 4];
         let newChord = Math.floor(Math.random() * 6);
         if (newChord == (13 - this.state.scale) % 7) {
             newChord++;

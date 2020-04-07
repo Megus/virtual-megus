@@ -24,12 +24,12 @@ class GBass1 {
             const step = pattern[c];
             if (step != -1) {
                 const pitch = state.scalePitches[state.chord + step + 7];
-                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pitch, velocity: 0.7}});
+                loop.events.push({time: c * 256, type: 'note', data: {pitch: pitch, velocity: 0.7, duration: 0}});
             }
         }
 
         if (loop.events.length == 0) {
-            loop.events.push({time: 0, type: 'noteOff', data: {pitch: 0, velocity: 0}});
+            loop.events.push({time: 0, type: 'nop', data: {}});
         }
 
         loop.events.sort((a, b) => a.time - b.time);

@@ -4,6 +4,7 @@
 // 2019-2020, Roman "Megus" Petrov
 
 let _unitId = 0;
+const _eps = 0.0001;
 
 class Unit {
     /**
@@ -16,42 +17,45 @@ class Unit {
     constructor(context, pitchTable, typeString) {
         this.context = context;
         this.pitchTable = pitchTable;
-        this.id = typeString  + (_unitId++);
+        this.id = typeString + (_unitId++);
     }
 
-    // startNote and stopNote should be implemented in subclasses
-    startNote(time, note) {}
-    stopNote(time, note) {}
+    // playNote should be implemented in subclasses
+    playNote(time, note) {}
 
-    // Convenient untility functions for all units
+    /// Convenient untility functions for all units
 
-    // Apply attack, decay and sustain phases of an ADSR envelope
-    applyEnvelopeADS(time, adsr, param, minValue, amplitude) {
-        // Attack
+    applyADSR(time, duration, adsr, param, minValue, amplitude) {
+        const releaseTime = time + ((duration < _eps) ? (adsr.attack + adsr.decay) : duration);
+        const decayTime = time + adsr.attack;
+        const sustainTime = time + adsr.attack + adsr.decay;
+        const endTime = releaseTime + adsr.release;
+
         let maxValue = minValue + amplitude;
-        if (maxValue < 0.0001) { maxValue = 0.0001; }
-        if (minValue < 0.0001) { minValue = 0.0001; }
+        let sustainValue = minValue + adsr.sustain * amplitude;
+        if (minValue < _eps) { minValue = _eps; }
+        if (maxValue < _eps) { maxValue = _eps; }
+        if (sustainValue < _eps) { sustainValue = _eps; }
+
+        // Attack
+        const attackValue = (releaseTime > decayTime) ? maxValue : (minValue + amplitude * (releaseTime - time) / adsr.attack);
+
         if (adsr.attack != 0) {
             param.setValueAtTime(minValue, time);
-            param.exponentialRampToValueAtTime(maxValue, time + adsr.attack);
+            param.linearRampToValueAtTime(attackValue, Math.min(decayTime, releaseTime));
         } else {
-            param.setValueAtTime(maxValue, time);
+            param.setValueAtTime(attackValue, time);
         }
 
         // Decay and sustain level
-        let sustainValue = minValue + adsr.sustain * amplitude;
-        if (sustainValue < 0.0001) { sustainValue = 0.0001; }
-        param.exponentialRampToValueAtTime(sustainValue, time + adsr.attack + adsr.decay);
-    }
+        if (attackValue > sustainValue) {
+            param.linearRampToValueAtTime(sustainValue, Math.min(sustainTime, releaseTime));
+        }
 
-    // Apply release phase of an ADSR envelope
-    applyEnvelopeR(time, adsr, param, minValue, amplitude) {
-        let sustainValue = minValue + adsr.sustain * amplitude;
-        if (sustainValue < 0.0001) { sustainValue = 0.0001; }
-        if (minValue < 0.0001) { minValue = 0.0001; }
+        // Release
+        param.linearRampToValueAtTime(sustainValue, releaseTime);
+        param.linearRampToValueAtTime(minValue, endTime);
 
-        param.cancelAndHoldAtTime(time);
-        param.exponentialRampToValueAtTime(sustainValue, time);
-        param.exponentialRampToValueAtTime(minValue, time + adsr.release);
+        return endTime;
     }
 }

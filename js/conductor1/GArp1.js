@@ -19,12 +19,12 @@ class GArp1 {
             const step = pattern[c];
             if (step != -1) {
                 const pitch = state.scalePitches[state.chord + step + 28];
-                loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: pitch, velocity: 0.5}});
+                loop.events.push({time: c * 256, type: 'note', data: {pitch: pitch, velocity: 0.4, duration: 0}});
             }
         }
 
         if (loop.events.length == 0) {
-            loop.events.push({time: 0, type: 'noteOff', data: {pitch: 0, velocity: 0}});
+            loop.events.push({time: 0, type: 'nop', data: {}});
         }
 
         loop.events.sort((a, b) => a.time - b.time);
@@ -32,6 +32,7 @@ class GArp1 {
     }
 
     nextLoop(state) {
+        console.log("Arp next");
         const step = Math.floor(Math.random() * 16);
         this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 3) * 2) : -1;
         return this.createLoop(this.pattern, state);

@@ -35,7 +35,7 @@ class SubSynthVoice {
         this.output = this.gainNode;
     }
 
-    startNote(time, note) {
+    playNote(time, note) {
         const preset = this.unit.voicePreset;
 
         try {
@@ -47,21 +47,10 @@ class SubSynthVoice {
 
         this.velocity = note.velocity;
 
-        this.unit.applyEnvelopeADS(time, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
-        this.unit.applyEnvelopeADS(time, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
+        const endTime = this.unit.applyADSR(time, note.duration, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
+        this.unit.applyADSR(time, note.duration, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
 
-        if (preset.ampEnvelope.sustain == 0) {
-            this.shutNote(time + preset.ampEnvelope.attack + preset.ampEnvelope.decay);
-        }
-
-    }
-
-    stopNote(time) {
-        const preset = this.unit.voicePreset;
-
-        this.unit.applyEnvelopeR(time, preset.ampEnvelope, this.gainNode.gain, 0, this.velocity);
-        this.unit.applyEnvelopeR(time, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
-        this.shutNote(time + preset.ampEnvelope.release);
+        this.shutNote(endTime);
     }
 
     shutNote(time) {

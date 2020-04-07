@@ -26,17 +26,13 @@ class MonoSynth extends Unit {
         this.output = this.gainNode;
     }
 
-    // Note: {pitch: ..., velocity: ...}
-    startNote(time, note) {
+    // Note: {pitch: ..., velocity: ..., duration: ...}
+    playNote(time, note) {
         this.shutNote(time);
         const voice = new SubSynthVoice(this);
         this.voices.push(voice);
         voice.output.connect(this.gainNode);
-        voice.startNote(time, note);
-    }
-
-    stopNote(time, note) {
-        this.voices.forEach((v) => v.stopNote(time, note));
+        voice.playNote(time, note);
     }
 
     shutNote(time) {

@@ -83,9 +83,12 @@ class GDrums1 {
             loop.steps = hits.length;
             for (let c = 0; c < hits.length; c++) {
                 if (hits[c] != 0) {
-                    loop.events.push({time: c * 256, type: 'noteOn', data: {pitch: instrumentMappings[instrument], velocity: hits[c]}});
+                    loop.events.push({time: c * 256, type: 'note', data: {pitch: instrumentMappings[instrument], velocity: hits[c], duration: 0}});
                 }
             }
+        }
+        if (loop.events.length == 0) {
+            loop.events.push({time: 0, type: 'nop', data: {}});
         }
         loop.events.sort((a, b) => a.time - b.time);
         return loop;

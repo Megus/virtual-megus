@@ -12,7 +12,7 @@ class PolySynth extends Unit {
         this.voicePreset = preset;
 
         this.gain = 1;
-        this.voices = {};
+        this.voices = [];
 
         this.gainNode = context.createGain();
         this.gainNode.gain.value = this.gain;
@@ -20,27 +20,17 @@ class PolySynth extends Unit {
         this.output = this.gainNode;
     }
 
-    startNote(time, note) {
+    playNote(time, note) {
         const voice = new SubSynthVoice(this);
-        this.stopNote(time, note);
-        this.voices[note.pitch] = voice;
+        this.voices.push(voice);
         voice.output.connect(this.gainNode);
-        voice.startNote(time, note);
-
-    }
-
-    stopNote(time, note) {
-        if (this.voices[note.pitch] != null) {
-            this.voices[note.pitch].stopNote(time);
-        }
+        voice.playNote(time, note);
     }
 
     onVoiceStop(voice) {
-        for (let pitch in this.voices) {
-            if (this.voices[pitch] === voice) {
-                this.voices[pitch] = null;
-                break;
-            }
+        const idx = this.voices.indexOf(voice);
+        if (idx != -1) {
+            this.voices.splice(idx, 1);
         }
     }
 }

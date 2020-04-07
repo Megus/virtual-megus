@@ -35,7 +35,7 @@ class DrumMachine extends Unit {
         }
     }
 
-    startNote(time, note) {
+    playNote(time, note) {
         const pitch = note.pitch;
         const instrumentIdx = Math.floor(pitch / 12);
         const sampleIdx = pitch % 12;
@@ -54,9 +54,5 @@ class DrumMachine extends Unit {
         sampleNode.connect(ampNode);
         ampNode.connect(this.gainNode);
         sampleNode.start(time);
-    }
-
-    stopNote(time, note) {
-
     }
 }

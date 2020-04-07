@@ -106,10 +106,8 @@ class Sequencer {
     handleEvent(unit, event, time) {
         if (this.onEvent != null) { this.onEvent(time, event.type, unit.id, event.data); }
 
-        if (event.type == 'noteOn') {
-            unit.startNote(time, event.data);
-        } else if (event.type == 'noteOff') {
-            unit.stopNote(time, event.data);
+        if (event.type == 'note') {
+            unit.playNote(time, event.data);
         }
     }
 }
