@@ -23,27 +23,36 @@ class Visualizer {
 
 
         this.draw = this.draw.bind(this);
+        this.onStep = this.onStep.bind(this);
+        this.onEvent = this.onEvent.bind(this);
 
-        this.initBeatVisuals();
+        this.initStepVisuals();
         this.initNoteVisuals();
 
         window.requestAnimationFrame(this.draw);
     }
 
+    /**
+     * Set sequencer for this visualizer
+     *
+     * @param {Sequencer} sequencer
+     */
     setSequencer(sequencer) {
         this.sequencer = sequencer;
-        sequencer.onBeat = this.onBeat.bind(this);
-        sequencer.onEvent = this.onEvent.bind(this);
+
+        sequencer.addStepCallback(this.onStep);
+        sequencer.addEventCallback(this.onEvent);
+
         this.lastTime = null;
     }
 
     // Sequencer events
-    onBeat(time, step) {
-        this.events.push({type: 'beat', time: time, data: step});
+    onStep(time, step) {
+        this.events.push({type: 'step', time: time, data: step});
     }
 
-    onEvent(time, eventType, unitId, eventData) {
-        this.events.push({type: eventType, time: time, unit: unitId, data: eventData});
+    onEvent(time, unitId, event) {
+        this.events.push({type: event.type, time: time, unit: unitId, data: event.data});
     }
 
     // Main drawing function
@@ -67,36 +76,36 @@ class Visualizer {
         const events = this.events.filter(event => event.time <= currentTime);
 
         events.forEach((event) => {
-            if (event.type == 'beat') {
-                this.handleBeatEvent(event);
+            if (event.type == 'step') {
+                this.handleStepEvent(event);
             } else {
                 this.handleNoteEvent(event);
             }
         });
 
         this.drawNoteVisuals(ctx, timeDiff);
-        this.drawBeatVisuals(ctx, timeDiff);
+        this.drawStepVisuals(ctx, timeDiff);
 
         this.events = this.events.filter(event => event.time > currentTime);
 
         window.requestAnimationFrame(this.draw);
     }
 
-    // Beat visuals
-    initBeatVisuals() {
+    // Step visuals
+    initStepVisuals() {
         this.logoSize = 1.0;
         this.logoSpeed = 1.0;
         this.logoScales = [];
     }
 
-    handleBeatEvent(event) {
+    handleStepEvent(event) {
         if (event.data % 4 == 0) {
             this.logoSize = 1.5;
             this.logoSpeed = 1.0;
         }
     }
 
-    drawBeatVisuals(ctx, timeDiff) {
+    drawStepVisuals(ctx, timeDiff) {
         this.logoScales.push(this.logoSize * 0.9);
 
         // Draw Megus logo

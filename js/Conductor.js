@@ -16,6 +16,10 @@ class Conductor {
         this.pitchTable = pitchTable;
     }
 
+    // To be implemented in subclasses
+    start() {};
+    stop() {};
+
     /**
      *
      * @param {int} key

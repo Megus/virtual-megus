@@ -5,7 +5,6 @@ class GPad1 {
     }
 
     nextLoop(state) {
-        console.log("Pad next");
         const pitch1 = state.scalePitches[state.chord + 28];
         const pitch2 = state.scalePitches[state.chord + 28 + 2];
         const pitch3 = state.scalePitches[state.chord + 28 + 4];

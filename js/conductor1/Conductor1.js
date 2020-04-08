@@ -11,6 +11,7 @@ class Conductor1 extends Conductor {
         this.generators = {};
         this.generatorConstructors = {};
         this.units = {};
+        this.stepCallback = this.stepCallback.bind(this);
     }
 
     addUnit(unit, generatorConstructor) {
@@ -41,7 +42,7 @@ class Conductor1 extends Conductor {
         this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1);
     }
 
-    play() {
+    start() {
         for (const unitId in this.units) {
             this.generators[unitId] = new this.generatorConstructors[unitId];
         }
@@ -50,38 +51,42 @@ class Conductor1 extends Conductor {
 
         // Prepare sequencer
         this.sequencer.setBPM(120);
-        this.sequencer.onPatternStart = (unitId) => {
-            if (this.sequencer.step >= this.patternStep) {
-                this.patternStep += 16;
-                console.log(this.patternStep);
-                this.nextState();
-            }
-
-            const newLoop = this.generators[unitId].nextLoop(this.state);
-            this.sequencer.addLoop(this.units[unitId], newLoop);
-        };
+        this.sequencer.addStepCallback(this.stepCallback);
 
         // Add first loops
         this.initState();
 
         for (const unitId in this.units) {
-            this.sequencer.addLoop(this.units[unitId], this.generators[unitId].nextLoop(this.state));
+            this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextLoop(this.state).events, this.patternStep);
         }
-
-        this.sequencer.play();
     }
 
     stop() {
-        this.sequencer.stop();
+        this.sequencer.removeStepCallback(this.stepCallback);
+        // TODO: Remove channels and do other cleanup, if needed
     }
 
     initState() {
+        const key = 0; // C
+        const scale = 5; // Minor
+        const startingChord = 0;    // Starting with root
+
         this.state = {
-            key: 0,     // C
-            scale: 5,   // Minor
-            chord: 0,   // Starting with root/tonic
+            key: key,
+            scale: scale,
+            chord: startingChord,
+            scalePitches: this.generateDiatonicScalePitches(key, scale),
         };
-        this.state.scalePitches = this.generateDiatonicScalePitches(this.state.key, this.state.scale);
+    }
+
+    stepCallback(time, step) {
+        if (step % 16 == 12) {
+            this.patternStep += 16;
+            this.nextState();
+            for (const unitId in this.units) {
+                this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextLoop(this.state).events, this.patternStep);
+            }
+        }
     }
 
     nextState() {

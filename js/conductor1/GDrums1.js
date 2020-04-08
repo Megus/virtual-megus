@@ -87,9 +87,6 @@ class GDrums1 {
                 }
             }
         }
-        if (loop.events.length == 0) {
-            loop.events.push({time: 0, type: 'nop', data: {}});
-        }
         loop.events.sort((a, b) => a.time - b.time);
         return loop;
     }

@@ -32,7 +32,6 @@ class GArp1 {
     }
 
     nextLoop(state) {
-        console.log("Arp next");
         const step = Math.floor(Math.random() * 16);
         this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 3) * 2) : -1;
         return this.createLoop(this.pattern, state);

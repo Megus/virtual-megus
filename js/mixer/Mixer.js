@@ -8,7 +8,6 @@
 class Mixer {
     constructor() {
         try {
-            // Get context
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             this.context = new AudioContext();
 
@@ -16,7 +15,6 @@ class Mixer {
         }
         catch (e) {
             alert(e);
-            //alert('Web Audio API is not supported in this browser');
         }
     }
 
@@ -25,5 +23,13 @@ class Mixer {
         channel.output.connect(this.context.destination);
         this.channels.push(channel);
         return channel;
+    }
+
+    removeChannel(channel) {
+        channel.output.disconnect();
+        const index = this.channels.indexOf(channel);
+        if (index != -1) {
+            this.channels.splice(index, 1);
+        }
     }
 }
