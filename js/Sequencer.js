@@ -74,6 +74,7 @@ class Sequencer {
     }
 
     const offset = stepOffset * 256;
+    events.sort((a, b) => a.time - b.time);
     events.forEach((event) => event.time += offset);
 
     Array.prototype.push.apply(this.events[unit.id], events)
@@ -147,6 +148,9 @@ class Sequencer {
   handleEvent(unit, event, time) {
     this.callEventCallbacks(time, unit.id, event);
 
-    if (event.type == 'note') { unit.playNote(time, event.data); }
+    if (event.type == 'note') {
+      event.data.duration = event.data.duration / 256 * this.stepLength;
+      unit.playNote(time, event.data);
+    }
   }
 }

@@ -40,6 +40,7 @@ class Conductor1 extends Conductor {
     this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1);
     this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["pad"]), GPad1);
     this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1);
+    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["lead1"]), GMelody1);
   }
 
   start() {
@@ -57,7 +58,7 @@ class Conductor1 extends Conductor {
     this.initState();
 
     for (const unitId in this.units) {
-      this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextLoop(this.state).events, this.patternStep);
+      this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextEvents(this.state), this.patternStep);
     }
   }
 
@@ -67,7 +68,7 @@ class Conductor1 extends Conductor {
   }
 
   initState() {
-    const key = 9; // C
+    const key = 0; // C
     const scale = 5; // Minor
     const startingChord = 0;    // Starting with root
 
@@ -84,7 +85,7 @@ class Conductor1 extends Conductor {
       this.patternStep += 16;
       this.nextState();
       for (const unitId in this.units) {
-        this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextLoop(this.state).events, this.patternStep);
+        this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextEvents(this.state), this.patternStep);
       }
     }
   }

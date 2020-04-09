@@ -74,29 +74,25 @@ class GDrums1 {
     return pattern;
   }
 
-  createLoop(pattern) {
-    const loop = {
-      events: [],
-    }
+  createEvents(pattern) {
+    const events = [];
     for (let instrument in pattern) {
       const hits = pattern[instrument];
-      loop.steps = hits.length;
       for (let c = 0; c < hits.length; c++) {
         if (hits[c] != 0) {
-          loop.events.push({
+          events.push({
             time: c * 256,
             type: 'note',
             data: {
               pitch: instrumentMappings[instrument],
               velocity: hits[c],
-              duration: 0
+              duration: 0,
             }
           });
         }
       }
     }
-    loop.events.sort((a, b) => a.time - b.time);
-    return loop;
+    return events;
   }
 
   prepareMutations(template) {
@@ -138,7 +134,7 @@ class GDrums1 {
     pattern[partName][step] = 1;
   }
 
-  nextLoop(state) {
+  nextEvents(state) {
     if (this.pattern == null) {
       this.pattern = this.createInitialPattern();
     } else {
@@ -148,6 +144,6 @@ class GDrums1 {
       }
     }
 
-    return this.createLoop(this.pattern);
+    return this.createEvents(this.pattern);
   }
 }
