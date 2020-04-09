@@ -30,7 +30,7 @@ class GMelody1 {
     let pitch = 20 + Math.floor(Math.random() * 10);
 
     for (let c = 0; c < runs; c++) {
-      const runLength = Math.floor(Math.random() * 3) + 1;
+      const runLength = Math.floor(Math.random() * 4) + 1;
 
       for (let d = 0; d < runLength; d++) {
         const blueNote = (pitch % 5 != 2) ? 0 : (Math.random() > 0.9 ? 1 : 0);
