@@ -33,7 +33,7 @@ class GMelody1 {
       const runLength = Math.floor(Math.random() * 4) + 1;
 
       for (let d = 0; d < runLength; d++) {
-        const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.9 ? 1 : 0);
+        const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.8 ? 1 : 0);
         pattern[step] = this.pentatonic[pitch] + blueNote;
 
         pitch += Math.floor(Math.random() * 7) - 3;
