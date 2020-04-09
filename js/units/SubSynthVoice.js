@@ -6,58 +6,58 @@
 'use strict';
 
 class SubSynthVoice {
-    constructor(unit) {
-        this.unit = unit;
+  constructor(unit) {
+    this.unit = unit;
 
-        const preset = unit.voicePreset;
-        const context = unit.context;
+    const preset = unit.voicePreset;
+    const context = unit.context;
 
-        this.filterNode = context.createBiquadFilter();
-        this.filterNode.type = preset.filter.type;
-        this.filterNode.Q.value = preset.filter.resonance;
+    this.filterNode = context.createBiquadFilter();
+    this.filterNode.type = preset.filter.type;
+    this.filterNode.Q.value = preset.filter.resonance;
 
-        this.gainNode = context.createGain();
-        this.filterNode.connect(this.gainNode);
+    this.gainNode = context.createGain();
+    this.filterNode.connect(this.gainNode);
 
-        this.oscBank = [];
-        for (let c = 0; c < preset.osc.length; c++) {
-            const osc = context.createOscillator();
-            osc.type = preset.osc[c].type;
-            osc.detune.value = preset.osc[c].detune;
-            const oscGain = context.createGain();
-            oscGain.gain.value = preset.osc[c].level;
-            osc.connect(oscGain);
-            oscGain.connect(this.filterNode);
-            this.oscBank.push(osc);
-        }
-        this.oscBank[0].onended = () => unit.onVoiceStop(this);
-
-        this.output = this.gainNode;
+    this.oscBank = [];
+    for (let c = 0; c < preset.osc.length; c++) {
+      const osc = context.createOscillator();
+      osc.type = preset.osc[c].type;
+      osc.detune.value = preset.osc[c].detune;
+      const oscGain = context.createGain();
+      oscGain.gain.value = preset.osc[c].level;
+      osc.connect(oscGain);
+      oscGain.connect(this.filterNode);
+      this.oscBank.push(osc);
     }
+    this.oscBank[0].onended = () => unit.onVoiceStop(this);
 
-    playNote(time, note) {
-        const preset = this.unit.voicePreset;
+    this.output = this.gainNode;
+  }
 
-        try {
-            for (let c = 0; c < this.oscBank.length; c++) {
-                this.oscBank[c].frequency.setValueAtTime(this.unit.pitchTable[note.pitch + preset.osc[c].pitch], time);
-                this.oscBank[c].start(time);
-            }
-        } catch (e) {}
+  playNote(time, note) {
+    const preset = this.unit.voicePreset;
 
-        this.velocity = note.velocity;
+    try {
+      for (let c = 0; c < this.oscBank.length; c++) {
+        this.oscBank[c].frequency.setValueAtTime(this.unit.pitchTable[note.pitch + preset.osc[c].pitch], time);
+        this.oscBank[c].start(time);
+      }
+    } catch (e) {}
 
-        const endTime = this.unit.applyADSR(time, note.duration, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
-        this.unit.applyADSR(time, note.duration, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
+    this.velocity = note.velocity;
 
-        this.shutNote(endTime);
+    const endTime = this.unit.applyADSR(time, note.duration, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
+    this.unit.applyADSR(time, note.duration, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
+
+    this.shutNote(endTime);
+  }
+
+  shutNote(time) {
+    for (let c = 0; c < this.oscBank.length; c++) {
+      try {
+        this.oscBank[c].stop(time);
+      } catch (e) {}
     }
-
-    shutNote(time) {
-        for (let c = 0; c < this.oscBank.length; c++) {
-            try {
-                this.oscBank[c].stop(time);
-            } catch (e) {}
-        }
-    }
+  }
 }

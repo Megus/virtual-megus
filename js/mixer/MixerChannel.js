@@ -6,8 +6,8 @@
 'use strict';
 
 class MixerChannel {
-    constructor(unit) {
-        this.unit = unit;
-        this.output = unit.output;
-    }
+  constructor(unit) {
+    this.unit = unit;
+    this.output = unit.output;
+  }
 }

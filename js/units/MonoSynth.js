@@ -6,46 +6,46 @@
 'use strict';
 
 class MonoSynth extends Unit {
-    /**
-     *
-     * @param {AudioContext} context
-     * @param {Array} pitchTable
-     * @param {Object} preset
-     */
-    constructor(context, pitchTable, preset) {
-        super(context, pitchTable, "monosynt");
+  /**
+  *
+  * @param {AudioContext} context
+  * @param {Array} pitchTable
+  * @param {Object} preset
+  */
+  constructor(context, pitchTable, preset) {
+    super(context, pitchTable, "monosynt");
 
-        this.voicePreset = preset;
+    this.voicePreset = preset;
 
-        this.gain = 1;
-        this.voices = [];
+    this.gain = 1;
+    this.voices = [];
 
-        this.gainNode = context.createGain();
-        this.gainNode.gain.value = this.gain;
+    this.gainNode = context.createGain();
+    this.gainNode.gain.value = this.gain;
 
-        this.output = this.gainNode;
+    this.output = this.gainNode;
+  }
+
+  // Note: {pitch: ..., velocity: ..., duration: ...}
+  playNote(time, note) {
+    this.shutNote(time);
+    const voice = new SubSynthVoice(this);
+    this.voices.push(voice);
+    voice.output.connect(this.gainNode);
+    voice.playNote(time, note);
+  }
+
+  shutNote(time) {
+    this.voices.forEach((v) => v.shutNote(time));
+  }
+
+  // Called by SubSynthVoice
+  onVoiceStop(voice) {
+    const idx = this.voices.indexOf(voice);
+    if (idx != -1) {
+      this.voices.splice(idx, 1);
     }
-
-    // Note: {pitch: ..., velocity: ..., duration: ...}
-    playNote(time, note) {
-        this.shutNote(time);
-        const voice = new SubSynthVoice(this);
-        this.voices.push(voice);
-        voice.output.connect(this.gainNode);
-        voice.playNote(time, note);
-    }
-
-    shutNote(time) {
-        this.voices.forEach((v) => v.shutNote(time));
-    }
-
-    // Called by SubSynthVoice
-    onVoiceStop(voice) {
-        const idx = this.voices.indexOf(voice);
-        if (idx != -1) {
-            this.voices.splice(idx, 1);
-        }
-    }
+  }
 }
 
 
