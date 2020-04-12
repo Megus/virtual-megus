@@ -1,23 +1,25 @@
-// Simple conductor
+// Simple composer
 //
 // Virtual Megus
 // 2019-2020, Roman "Megus" Petrov
 
 'use strict';
 
-class Conductor1 extends Conductor {
-  constructor(mixer, sequencer, pitchTable) {
-    super(mixer, sequencer, pitchTable);
+class Composer1 extends Composer {
+  constructor(mixer, sequencer) {
+    super(mixer, sequencer);
+    this.pitchTable = create12TETPitchTable(440.0);
     this.generators = {};
     this.generatorConstructors = {};
-    this.units = {};
+    this.channels = {};
     this.stepCallback = this.stepCallback.bind(this);
   }
 
   addUnit(unit, generatorConstructor) {
-    this.mixer.addChannel(unit);
-    this.units[unit.id] = unit;
-    this.generatorConstructors[unit.id] = generatorConstructor;
+    const channel = new MixerChannel(unit);
+    this.mixer.addChannel(channel);
+    this.channels[channel.id] = channel;
+    this.generatorConstructors[channel.id] = generatorConstructor;
   }
 
   async setupEnsemble() {
@@ -44,8 +46,8 @@ class Conductor1 extends Conductor {
   }
 
   start() {
-    for (const unitId in this.units) {
-      this.generators[unitId] = new this.generatorConstructors[unitId];
+    for (const channelId in this.channels) {
+      this.generators[channelId] = new this.generatorConstructors[channelId];
     }
 
     this.patternStep = 0;
@@ -54,17 +56,19 @@ class Conductor1 extends Conductor {
     this.sequencer.setBPM(120);
     this.sequencer.addStepCallback(this.stepCallback);
 
-    // Add first loops
+    // Add first patterns
     this.initState();
-
-    for (const unitId in this.units) {
-      this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextEvents(this.state), this.patternStep);
-    }
+    this.generateNextPatterns();
   }
 
   stop() {
     this.sequencer.removeStepCallback(this.stepCallback);
-    // TODO: Remove channels and do other cleanup, if needed
+    for (const channelId in this.channels) {
+      this.mixer.removeChannel(this.channels[channelId]);
+    }
+    this.channels = {};
+    this.generatorConstructors = {};
+    this.generators = {};
   }
 
   initState() {
@@ -76,7 +80,7 @@ class Conductor1 extends Conductor {
       key: key,
       scale: scale,
       chord: startingChord,
-      scalePitches: this.generateDiatonicScalePitches(key, scale),
+      scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
   }
 
@@ -84,9 +88,17 @@ class Conductor1 extends Conductor {
     if (step % 16 == 12) {
       this.patternStep += 16;
       this.nextState();
-      for (const unitId in this.units) {
-        this.sequencer.addEvents(this.units[unitId], this.generators[unitId].nextEvents(this.state), this.patternStep);
-      }
+      this.generateNextPatterns();
+    }
+  }
+
+  generateNextPatterns() {
+    for (const channelId in this.channels) {
+      this.sequencer.addEvents(
+        this.channels[channelId],
+        this.generators[channelId].nextEvents(this.state),
+        this.patternStep
+      );
     }
   }
 

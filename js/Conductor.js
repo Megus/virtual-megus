@@ -1,46 +1,42 @@
+// Core of music generator
+//
+// Virtual Megus
+// 2019-2020, Roman "Megus" Petrov
 
-/**
-* Base class for all conductors
-*/
+'use strict';
 
 class Conductor {
-  /**
-  *
-  * @param {Mixer} mixer
-  * @param {Sequencer} sequencer
-  * @param {Array} pitchTable
-  */
-  constructor(mixer, sequencer, pitchTable) {
-    this.mixer = mixer;
-    this.sequencer = sequencer;
-    this.pitchTable = pitchTable;
+  constructor() {
   }
 
-  // To be implemented in subclasses
-  start() {};
-  stop() {};
+  setVisualizer(visualizer) {
+    this.visualizer = visualizer;
+  }
 
-  /**
-  *
-  * @param {int} key
-  * @param {int} scale
-  */
-  generateDiatonicScalePitches(key, scale) {
-    const diatonic = [0, 2, 4, 5, 7, 9, 11];
-    const pitches = [];
-    let idx = scale;
-    let pitch = key;
-
-    while (pitch < 96) {
-      pitches.push(pitch);
-      const oldStep = diatonic[idx];
-      idx = (idx + 1) % 7;
-      const newStep = diatonic[idx];
-      let diff = newStep - oldStep;
-      if (diff < 0) diff += 12;
-      pitch += diff;
+  async play() {
+    if (this.mixer == null) {
+      this.mixer = new Mixer();
+      this.sequencer = new Sequencer(this.mixer.context);
+      this.mixer.addRemoveChannelCallback(this.visualizer.onRemoveChannel);
+      this.visualizer.setSequencer(this.sequencer);
     }
 
-    return pitches;
+
+    if (this.composer == null) {
+      this.composer = new Composer1(this.mixer, this.sequencer);
+      await this.composer.setupEnsemble();
+      this.composer.start();
+    }
+    this.sequencer.play();
+  }
+
+  pause() {
+    this.sequencer.pause();
+  }
+
+  stop() {
+    this.composer.stop();
+    this.sequencer.reset();
+    this.composer = null;
   }
 }

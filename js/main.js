@@ -1,25 +1,32 @@
-let generator = null;
+let sharedConductor = null;
 let visualizer = null;
 
 function init() {
+  sharedConductor = new Conductor();
   visualizer = new Visualizer("visuals");
 }
 
-async function play() {
-  if (generator == null) {
-    generator = new Generator();
-  }
-
-  await generator.play();
-  visualizer.setSequencer(generator.sequencer);
+function play() {
   document.getElementById("playButton").style.display = "none";
   document.getElementById("stopButton").style.display = "block";
+  document.getElementById("pauseButton").style.display = "block";
   document.getElementById("buttonContainer").className = "buttonContainer2";
+  sharedConductor.setVisualizer(visualizer);
+  sharedConductor.play();
 }
 
 function stop() {
-  generator.stop();
   document.getElementById("playButton").style.display = "block";
   document.getElementById("stopButton").style.display = "none";
+  document.getElementById("pauseButton").style.display = "none";
   document.getElementById("buttonContainer").className = "buttonContainer1";
+  sharedConductor.stop();
+}
+
+function pause() {
+  document.getElementById("playButton").style.display = "block";
+  document.getElementById("stopButton").style.display = "none";
+  document.getElementById("pauseButton").style.display = "none";
+  document.getElementById("buttonContainer").className = "buttonContainer1";
+  sharedConductor.pause();
 }

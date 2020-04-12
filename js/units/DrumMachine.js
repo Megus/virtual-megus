@@ -10,13 +10,9 @@ class DrumMachine extends Unit {
     super(context, [], "drummach");
 
     this.kit = [];
-    this.settings = {
-      gain: 1,
-    };
 
     this.gainNode = context.createGain();
-    this.gainNode.gain.value = this.settings.gain;
-
+    this.gainNode.gain.value = 1;
     this.output = this.gainNode;
   }
 

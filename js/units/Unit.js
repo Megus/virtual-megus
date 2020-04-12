@@ -3,7 +3,6 @@
 // Virtual Megus
 // 2019-2020, Roman "Megus" Petrov
 
-let _unitId = 0;
 const _eps = 0.0001;
 
 class Unit {
@@ -12,18 +11,22 @@ class Unit {
   *
   * @param {AudioContect} context
   * @param {Array} pitchTable
-  * @param {String} typeString
+  * @param {String} unitType
   */
-  constructor(context, pitchTable, typeString) {
+  constructor(context, pitchTable, unitType) {
     this.context = context;
     this.pitchTable = pitchTable;
-    this.id = typeString + (_unitId++);
+    this.unitType = unitType;
   }
 
-  // playNote should be implemented in subclasses
+  // Should be implemented in subclasses
+
+  // Dispose unit: free all resources
+  dispose() {}
+  // Play a note
   playNote(time, note) {}
 
-  /// Convenient untility functions for all units
+  // Convenient untility functions for all units
 
   applyADSR(time, duration, adsr, param, minValue, amplitude) {
     const releaseTime = time + ((duration < _eps) ? (adsr.attack + adsr.decay) : duration);

@@ -11,12 +11,10 @@ class PolySynth extends Unit {
 
 		this.voicePreset = preset;
 
-		this.gain = 1;
 		this.voices = [];
 
 		this.gainNode = context.createGain();
-		this.gainNode.gain.value = this.gain;
-
+		this.gainNode.gain.value = 1;
 		this.output = this.gainNode;
 	}
 

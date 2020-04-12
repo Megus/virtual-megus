@@ -76,9 +76,17 @@ a:visited {
 #stopButton {
   background: url(stop-button.png) no-repeat;
   background-size: cover;
-  left: 192px;
+  right: 96px;
   display: none;
 }
+
+#pauseButton {
+  background: url(pause-button.png) no-repeat;
+  background-size: cover;
+  left: 96px;
+  display: none;
+}
+
 
 #mainContainer {
   position: relative;

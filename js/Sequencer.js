@@ -16,7 +16,7 @@ class Sequencer {
     this.eventCallbacks = [];
 
     this.events = {};
-    this.units = {};
+    this.channels = {};
     this.step = 0;
     this.calledStepCallback = false;
 
@@ -56,28 +56,28 @@ class Sequencer {
     }
   }
 
-  callEventCallbacks(time, unitId, event) {
-    this.eventCallbacks.forEach((callback) => callback(time, unitId, event));
+  callEventCallbacks(time, channelId, event) {
+    this.eventCallbacks.forEach((callback) => callback(time, channelId, event));
   }
 
   /**
-  * Add new events for the unit
+  * Add new events for the channel
   *
-  * @param {Unit} unit
+  * @param {MixerChannel} channel
   * @param {Array} events
   * @param {int} stepOffset
   */
-  addEvents(unit, events, stepOffset) {
-    if (this.events[unit.id] == null) {
-      this.events[unit.id] = [];
-      this.units[unit.id] = unit;
+  addEvents(channel, events, stepOffset) {
+    if (this.events[channel.id] == null) {
+      this.events[channel.id] = [];
+      this.channels[channel.id] = channel;
     }
 
     const offset = stepOffset * 256;
     events.sort((a, b) => a.time - b.time);
     events.forEach((event) => event.time += offset);
 
-    Array.prototype.push.apply(this.events[unit.id], events)
+    Array.prototype.push.apply(this.events[channel.id], events)
   }
 
   setBPM(bpm) {
@@ -89,7 +89,7 @@ class Sequencer {
   reset() {
     this.isStopped = true;
     this.events = {};
-    this.units = {};
+    this.channels = {};
     this.step = 0;
   }
 
@@ -121,8 +121,8 @@ class Sequencer {
       this.calledStepCallback = false;
     }
 
-    for (const unitId in this.events) {
-      let events = this.events[unitId];
+    for (const channelId in this.events) {
+      let events = this.events[channelId];
       if (events.length == 0) { continue; }
 
       let playedEvents = 0;
@@ -131,7 +131,7 @@ class Sequencer {
         let eventTime = (event.time / 256.0 - this.step) * this.stepLength + this.stepTime;
 
         if (eventTime <= this.context.currentTime + this.scheduleAhead) {
-          this.handleEvent(this.units[unitId], event, eventTime);
+          this.handleEvent(this.channels[channelId], event, eventTime);
           playedEvents++;
         } else {
           break;
@@ -145,12 +145,12 @@ class Sequencer {
     this.timerID = window.setTimeout(this.scheduler, this.period);
   }
 
-  handleEvent(unit, event, time) {
-    this.callEventCallbacks(time, unit.id, event);
+  handleEvent(channel, event, time) {
+    this.callEventCallbacks(time, channel.id, event);
 
     if (event.type == 'note') {
       event.data.duration = event.data.duration / 256 * this.stepLength;
-      unit.playNote(time, event.data);
+      channel.unit.playNote(time, event.data);
     }
   }
 }

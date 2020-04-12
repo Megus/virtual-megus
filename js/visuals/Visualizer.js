@@ -25,11 +25,17 @@ class Visualizer {
     this.draw = this.draw.bind(this);
     this.onStep = this.onStep.bind(this);
     this.onEvent = this.onEvent.bind(this);
+    this.onRemoveChannel = this.onRemoveChannel.bind(this);
 
     this.initStepVisuals();
     this.initNoteVisuals();
 
     window.requestAnimationFrame(this.draw);
+  }
+
+  onRemoveChannel(channel) {
+    this.events = this.events.filter(event => event.channel == channel.id);
+    delete this.channelVisuals[channel.id];
   }
 
   /**
@@ -51,8 +57,8 @@ class Visualizer {
     this.events.push({type: 'step', time: time, data: step});
   }
 
-  onEvent(time, unitId, event) {
-    this.events.push({type: event.type, time: time, unit: unitId, data: event.data});
+  onEvent(time, channelId, event) {
+    this.events.push({type: event.type, time: time, channel: channelId, data: event.data});
   }
 
   // Main drawing function
@@ -146,21 +152,21 @@ class Visualizer {
 
   // Note visuals
   initNoteVisuals() {
-    this.unitVisuals = {};
+    this.channelVisuals = {};
   }
 
   handleNoteEvent(event) {
-    const unitType = event.unit.substring(0, 8);
+    const unitType = event.channel.substring(0, 8);
 
-    // Create new visuals for a unit
-    if (this.unitVisuals[event.unit] == null) {
+    // Create new visuals for a channel
+    if (this.channelVisuals[event.channel] == null) {
       if (unitType == 'drummach') {
-        this.unitVisuals[event.unit] = {
+        this.channelVisuals[event.channel] = {
           type: 'dots',
           dots: [],
         };
       } else {
-        this.unitVisuals[event.unit] = {
+        this.channelVisuals[event.channel] = {
           type: 'shape',
           shapes: [],
           width: 1,
@@ -171,7 +177,7 @@ class Visualizer {
       }
     }
 
-    const visuals = this.unitVisuals[event.unit];
+    const visuals = this.channelVisuals[event.channel];
     if (visuals.type == 'dots') {
       visuals.dots.push({
         x: Math.random(),
@@ -187,8 +193,8 @@ class Visualizer {
   }
 
   drawNoteVisuals(ctx, timeDiff) {
-    for (let unit in this.unitVisuals) {
-      const visuals = this.unitVisuals[unit];
+    for (let channel in this.channelVisuals) {
+      const visuals = this.channelVisuals[channel];
       if (visuals.type == 'dots') { this.drawDotsVisuals(ctx, timeDiff, visuals); }
       else if (visuals.type == 'shape') { this.drawShapeVisuals(ctx, timeDiff, visuals); }
     }
