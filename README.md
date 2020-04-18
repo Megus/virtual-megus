@@ -7,3 +7,18 @@ For years I wanted to experiment with procedural music. In August 2019, I decide
 My goal is to create a system, which can play neverending electronic music. I'm not into abstract noises, so I'm trying to achieve pleasant to listen to results.
 
 I'm going to document my progress in [my blog](https://megus.org) and [Twitter](https://twitter.com/sugem).
+
+## Current features
+
+- Audio engine (synths and effects):
+  - Drum machine
+  - Monophonic subtractive synth
+  - Polyphonic subtractive synth
+- Music generation:
+  - Simple, but pretty powerful drum pattern generator
+  - Primitive random bass line generator
+  - Primitive random arpeggio generator
+  - Simple melody generator
+  - Random chord progressions in the minor scale
+- UI:
+  - Simple visualizer

@@ -4,6 +4,19 @@
   <link rel="stylesheet" href="assets/main.css">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta property="og:title" content="Virtual Megus">
+  <meta property="og:locale" content="en_US">
+  <meta name="description" content="An experiment with procedural music">
+  <meta property="og:description" content="An experiment with procedural music">
+  <link rel="canonical" href="https://megus.org/virtual-megus">
+  <meta property="og:url" content="https://megus.org/virtual-megus">
+  <meta property="og:site_name" content="Virtual Megus">
+  <meta property="og:image" content="https://megus.org/virtual-megus/assets/virtual-megus.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@sugem">
+  <meta name="twitter:creator" content="@sugem">
+  <script type="application/ld+json">{"description":"An experiment with procedural music","@type":"WebPage","url":"https://megus.org/virtual-megus","image":"https://megus.org/virtual-megus/assets/virtual-megus.jpg","headline":"Virtual Megus","@context":"http://schema.org"}</script>
 
   <script type="text/javascript" src="js/main.js"></script>
   <script type="text/javascript" src="js/utils.js"></script>
@@ -31,6 +44,13 @@
 
   <script type="text/javascript" src="js/units/SynthPresets.js"></script>
 
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-104711057-2"></script>
+	<script>
+  	window.dataLayer = window.dataLayer || [];
+  	function gtag(){dataLayer.push(arguments);}
+  	gtag('js', new Date());
+  	gtag('config', 'UA-104711057-2');
+	</script>
 </head>
 <body onload="init();">
   <h1>Virtual Megus</h1>
@@ -44,16 +64,39 @@
     </div>
   </div>
   <p>
-    For years I wanted to experiment with procedural music. In August 2019, I decided that the time has come.
-    I also wanted to learn WebAudio API; that's why it runs in a browser
-    (Google Chrome only now, I may add support for other browsers in the future).
+    Procedural music is one of my long-time interests. Virtual Megus is the attempt to create a system
+    which plays neverending electronic music. I’m not into abstract noises, so my goal is to
+    achieve pleasant-sounding results. As a musician, I obviously have some biases, and my system
+    will probably have them too, hence the name — Virtual Megus.
   </p>
-  <p>
-    My goal is to create a system, which can play neverending electronic music.
-    I'm not into abstract noises, so I'm trying to achieve pleasant to listen to results.
-  </p>
-  <p>
-    <a href="https://github.com/Megus/virtual-megus">Source code on GitHub</a>
+  <h3>Current features</h3>
+  <ul>
+    <li>Audio engine (synths and effects):</li>
+    <ul>
+      <li>Drum machine</li>
+      <li>Monophonic subtractive synth</li>
+      <li>Polyphonic subtractive synth</li>
+    </ul>
+    <li>Music generation:</li>
+    <ul>
+      <li>Simple, but pretty powerful drum pattern generator</li>
+      <li>Primitive random bass line generator</li>
+      <li>Primitive random arpeggio generator</li>
+      <li>Simple melody generator</li>
+      <li>Random chord progressions in the minor scale</li>
+    </ul>
+    <li>UI:</li>
+    <ul>
+      <li>Simple visualizer</li>
+    </ul>
+  </ul>
+  <h3>Links</h3>
+    <ul>
+      <li><a href="https://github.com/Megus/virtual-megus">Source code on GitHub</a></li>
+      <li><a href="https://megus.org">My website</a></li>
+      <li><a href="https://twitter.com/sugem">My Twitter</a></li>
+    </ul>
+
   </p>
 </body>
 </html>
