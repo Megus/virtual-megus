@@ -15,6 +15,13 @@ class Mixer {
 
       this.addChannelCallbacks = [];
       this.removeChannelCallbacks = [];
+
+      this.masterBusInput = this.context.createGain();
+      this.masterBusOutput = this.context.createGain();
+      this.masterBusOutput.connect(this.context.destination);
+
+      this.masterBusInput.connect(this.masterBusOutput);
+
     }
     catch (e) {
       alert(e);

@@ -6,6 +6,11 @@
 'use strict';
 
 class SubSynthVoice {
+  /**
+   * SubSyntVoice constructor
+   *
+   * @param {Unit} unit
+   */
   constructor(unit) {
     this.unit = unit;
 
@@ -16,8 +21,11 @@ class SubSynthVoice {
     this.filterNode.type = preset.filter.type;
     this.filterNode.Q.value = preset.filter.resonance;
 
+    this.pannerNode = context.createStereoPanner();
     this.gainNode = context.createGain();
-    this.filterNode.connect(this.gainNode);
+
+    this.filterNode.connect(this.pannerNode);
+    this.pannerNode.connect(this.gainNode);
 
     this.oscBank = [];
     for (let c = 0; c < preset.osc.length; c++) {
@@ -37,6 +45,16 @@ class SubSynthVoice {
 
   playNote(time, note) {
     const preset = this.unit.voicePreset;
+
+    // Apply panning
+    if (preset.panning != null) {
+      let pan = preset.panning.pan;
+      if (preset.panning.spread != null) {
+        pan += (note.pitch - preset.panning.centerPitch) * preset.panning.spread;
+      }
+
+      this.pannerNode.pan.setValueAtTime(this.unit.clamp(pan, -1, 1), time);
+    }
 
     try {
       for (let c = 0; c < this.oscBank.length; c++) {

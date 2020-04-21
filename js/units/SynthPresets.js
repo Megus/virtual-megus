@@ -34,6 +34,7 @@ const synthPresets = {
     ampEnvelope: {attack: 0, decay: 0.2, sustain: 0.2, release: 0.5},
     filterEnvelope: {attack: 0.1, decay: 0.3, sustain: 0, release: 0},
     filter: {cutoff: 800, resonance: 2, envelopeLevel: 1200, type: 'lowpass'},
+    panning: {pan: 0.2, centerPitch: 48, spread: -0.03},
     osc: [
       {type: 'square', pitch: 0, detune: 0, level: 0.33},
       {type: 'square', pitch: 0, detune: -10, level: 0.23},
@@ -47,6 +48,7 @@ const synthPresets = {
     ampEnvelope: {attack: 0.4, decay: 2, sustain: 0.8, release: 2},
     filterEnvelope: {attack: 0.5, decay: 2, sustain: 0.4, release: 2},
     filter: {cutoff: 3000, resonance: 1, envelopeLevel: 500, type: 'lowpass'},
+    panning: {pan: -0.2, centerPitch: 48, spread: 0.03},
     osc: [
       {type: 'sawtooth', pitch: 0, detune: 0, level: 0.33},
       {type: 'sawtooth', pitch: 0, detune: -15, level: 0.33},

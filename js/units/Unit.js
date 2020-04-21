@@ -9,9 +9,9 @@ class Unit {
   /**
   * Default Unit constructor
   *
-  * @param {AudioContect} context
+  * @param {AudioContext} context
   * @param {Array} pitchTable
-  * @param {String} unitType
+  * @param {string} unitType
   */
   constructor(context, pitchTable, unitType) {
     this.context = context;
@@ -60,5 +60,16 @@ class Unit {
     param.linearRampToValueAtTime(minValue, endTime);
 
     return endTime;
+  }
+
+  /**
+   * Clamp value between min and max values
+   *
+   * @param {number} value
+   * @param {number} min
+   * @param {number} max
+   */
+  clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 }

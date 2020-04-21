@@ -6,6 +6,11 @@
 'use strict';
 
 class Sequencer {
+  /**
+   * Sequencer constructor
+   *
+   * @param {AudioContext} context WebAudio Context
+   */
   constructor(context) {
     this.context = context;
 
@@ -26,10 +31,21 @@ class Sequencer {
   }
 
   // Working with step callbacks
+
+  /**
+   * Add step callback
+   *
+   * @param {function} callback
+   */
   addStepCallback(callback) {
     this.stepCallbacks.push(callback);
   }
 
+  /**
+   * Remove step callback
+   *
+   * @param {function} callback
+   */
   removeStepCallback(callback) {
     const index = this.stepCallbacks.indexOf(callback);
     if (index != -1) {
@@ -37,6 +53,12 @@ class Sequencer {
     }
   }
 
+  /**
+   * Call all registered step callbacks
+   *
+   * @param {number} stepTime
+   * @param {number} step
+   */
   callStepCallbacks(stepTime, step) {
     if (!this.calledStepCallback) {
       this.stepCallbacks.forEach((callback) => callback(stepTime, step));
@@ -45,10 +67,21 @@ class Sequencer {
   }
 
   // Working with event callbacks
+
+  /**
+   * Add event callback
+   *
+   * @param {function} callback
+   */
   addEventCallback(callback) {
     this.eventCallbacks.push(callback);
   }
 
+  /**
+   * Remove event callback
+   *
+   * @param {function} callback
+   */
   removeEventCallback(callback) {
     const index = this.eventCallbacks.indexOf(callback);
     if (index != -1) {
@@ -65,7 +98,7 @@ class Sequencer {
   *
   * @param {MixerChannel} channel
   * @param {Array} events
-  * @param {int} stepOffset
+  * @param {number} stepOffset
   */
   addEvents(channel, events, stepOffset) {
     if (this.events[channel.id] == null) {

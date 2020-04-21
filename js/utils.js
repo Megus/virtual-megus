@@ -45,8 +45,8 @@ function create12TETPitchTable(A4Freq) {
   /**
   * Creates a list of any diatonic scale pitches
   *
-  * @param {int} key
-  * @param {int} scale
+  * @param {number} key
+  * @param {number} scale
   */
  function diatonicScalePitches(key, scale, pitchTable) {
   const diatonic = [0, 2, 4, 5, 7, 9, 11];
