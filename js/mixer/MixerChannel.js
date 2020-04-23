@@ -16,12 +16,17 @@ class MixerChannel {
     this.gainNode = this.context.createGain();
     this.gainNode.gain.value = 1;
 
+    this.reverbSend = this.context.createGain();
+    this.reverbSend.gain.value = 0.5;
+
     this.unit.output.connect(this.gainNode);
+    this.unit.output.connect(this.reverbSend);
 
     this.output = this.gainNode;
   }
 
   dispose() {
     this.unit.output.disconnect();
+    this.reverbSend.disconnect();
   }
 }

@@ -9,6 +9,7 @@ class Visualizer {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     this.events = [];
+    this.loadingProgress = 0;
 
     this.dotColors = [
       '#ffffff',
@@ -26,6 +27,7 @@ class Visualizer {
     this.onStep = this.onStep.bind(this);
     this.onEvent = this.onEvent.bind(this);
     this.onRemoveChannel = this.onRemoveChannel.bind(this);
+    this.setLoadingProgress = this.setLoadingProgress.bind(this);
 
     this.initStepVisuals();
     this.initNoteVisuals();
@@ -50,6 +52,24 @@ class Visualizer {
     sequencer.addEventCallback(this.onEvent);
 
     this.lastTime = null;
+  }
+
+  /**
+   * Set immediate analyser values provider
+   *
+   * @param {function} provider
+   */
+  setValuesProvider(provider) {
+    this.valuesProvider = provider;
+  }
+
+  /**
+   * Set loading progress value (0-1)
+   *
+   * @param {number} value
+   */
+  setLoadingProgress(value) {
+    this.loadingProgress = value;
   }
 
   // Sequencer events
@@ -77,6 +97,20 @@ class Visualizer {
 
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, this.width, this.height);
+
+    // Draw loading progress
+    ctx.fillStyle = "#d0d0f0";
+    ctx.fillRect(0, this.height - 8, this.width * this.loadingProgress, this.height);
+
+    // Draw immediate visuals from Mixer
+    if (this.valuesProvider != null) {
+      const values = this.valuesProvider();
+
+      const reduction = values.compressor;
+
+      ctx.fillStyle = "#000040";
+      ctx.fillRect(0, 0, this.width, -reduction * 20);
+    }
 
     // Get events
     const events = this.events.filter(event => event.time <= currentTime);

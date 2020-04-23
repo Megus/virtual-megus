@@ -27,6 +27,11 @@ class Conductor {
       this.sequencer = new Sequencer(this.mixer.context);
       this.mixer.addRemoveChannelCallback(this.visualizer.onRemoveChannel);
       this.visualizer.setSequencer(this.sequencer);
+      this.visualizer.setValuesProvider(this.mixer.getValuesForVisuals);
+      this.audioFileManager = new AudioFileManager();
+      await this.audioFileManager.loadAudioFiles(this.mixer.context, this.visualizer.setLoadingProgress);
+      this.visualizer.setLoadingProgress(0);
+      this.mixer.setMasterReverbImpulse(this.audioFileManager.audioBuffers["SteinmanFoundationRecordingSuite.wav"]);
     }
 
     if (this.composer == null) {

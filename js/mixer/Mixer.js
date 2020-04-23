@@ -12,20 +12,39 @@ class Mixer {
       this.context = new AudioContext();
 
       this.channels = [];
-
       this.addChannelCallbacks = [];
       this.removeChannelCallbacks = [];
+      this.getValuesForVisuals = this.getValuesForVisuals.bind(this);
 
+      // Setup master bus elements
       this.masterBusInput = this.context.createGain();
       this.masterBusOutput = this.context.createGain();
       this.masterBusOutput.connect(this.context.destination);
 
-      this.masterBusInput.connect(this.masterBusOutput);
+      // Default master compressor
+      this.masterCompressor = this.context.createDynamicsCompressor();
+      this.masterCompressor.attack.value = 0.05;
+      this.masterCompressor.release.value = 0.1;
+      this.masterCompressor.threshold.value = -20;
+      this.masterCompressor.ratio.value = 4;
+      this.masterCompressor.knee.value = 40;
 
+      // Master reverberator
+      this.masterReverb = this.context.createConvolver();
+      this.masterReverb.normalize = true;
+
+      // Routing
+      this.masterBusInput.connect(this.masterCompressor);
+      this.masterReverb.connect(this.masterCompressor);
+      this.masterCompressor.connect(this.masterBusOutput);
     }
     catch (e) {
       alert(e);
     }
+  }
+
+  setMasterReverbImpulse(buffer) {
+    this.masterReverb.buffer = buffer;
   }
 
   addAddChannelCallback(callback) {
@@ -51,19 +70,25 @@ class Mixer {
   }
 
   addChannel(channel) {
-    channel.output.connect(this.context.destination);
+    channel.output.connect(this.masterBusInput);
+    channel.reverbSend.connect(this.masterReverb);
     this.channels.push(channel);
     this.addChannelCallbacks.forEach((callback) => callback(channel));
     return channel;
   }
 
   removeChannel(channel) {
-    channel.output.disconnect();
     channel.dispose();
     const index = this.channels.indexOf(channel);
     if (index != -1) {
       this.channels.splice(index, 1);
       this.removeChannelCallbacks.forEach((callback) => callback(channel));
+    }
+  }
+
+  getValuesForVisuals() {
+    return {
+      compressor: this.masterCompressor.reduction,
     }
   }
 }

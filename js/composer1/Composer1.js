@@ -15,8 +15,16 @@ class Composer1 extends Composer {
     this.stepCallback = this.stepCallback.bind(this);
   }
 
+  /**
+   *
+   * @param {Unit} unit
+   * @param {function} generatorConstructor
+   */
   addUnit(unit, generatorConstructor) {
     const channel = new MixerChannel(unit);
+    if (unit.unitType == "drummach") {
+      channel.reverbSend.gain.value = 0.1;
+    }
     this.mixer.addChannel(channel);
     this.channels[channel.id] = channel;
     this.generatorConstructors[channel.id] = generatorConstructor;
@@ -26,17 +34,17 @@ class Composer1 extends Composer {
     const drums = new DrumMachine(this.mixer.context);
 
     const kitInfo = [
-      ['samples/808/808-bass-drum.mp3'], // 0
-      ['samples/808/808-clap.mp3'], // 1
-      ['samples/808/808-rim-shot.mp3'], // 2
-      ['samples/808/808-snare.mp3'], // 3
-      ['samples/808/808-closed-hat.mp3'], // 4
-      ['samples/808/808-open-hat.mp3'], // 5
-      ['samples/808/808-clave.mp3'], // 6
-      ['samples/808/808-cymbal.mp3'], // 7
+      ['808-bass-drum.mp3'], // 0
+      ['808-clap.mp3'], // 1
+      ['808-rim-shot.mp3'], // 2
+      ['808-snare.mp3'], // 3
+      ['808-closed-hat.mp3'], // 4
+      ['808-open-hat.mp3'], // 5
+      ['808-clave.mp3'], // 6
+      ['808-cymbal.mp3'], // 7
     ];
 
-    await drums.loadKit(kitInfo);
+    drums.loadKit(kitInfo);
 
     this.addUnit(drums, GDrums1);
     this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1);

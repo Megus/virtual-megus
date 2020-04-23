@@ -16,16 +16,13 @@ class DrumMachine extends Unit {
     this.output = this.gainNode;
   }
 
-  async loadKit(kitInfo) {
+  loadKit(kitInfo) {
     this.kit = [];
     for (let c = 0; c < kitInfo.length; c++) {
       const sampleSet = kitInfo[c];
       let instrument = [];
       for (let d = 0; d < sampleSet.length; d++) {
-        const response = await fetch(sampleSet[d]);
-        const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await this.context.decodeAudioData(arrayBuffer);
-        instrument.push(audioBuffer);
+        instrument.push(sharedConductor.audioFileManager.audioBuffers[sampleSet[d]]);
       }
       this.kit.push(instrument);
     }
