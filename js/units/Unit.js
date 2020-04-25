@@ -23,11 +23,40 @@ class Unit {
 
   // Dispose unit: free all resources
   dispose() {}
-  // Play a note
-  playNote(time, note) {}
+
+  /**
+   * Handle note and automation events
+   *
+   * @param {Object} event
+   */
+  handleEvent(event) {
+    if (event.type == "note") {
+      this.playNote(event.timeSeconds, event.data);
+    }
+  }
+
+  /**
+   * Plays a note
+   *
+   * @param {number} time
+   * @param {Object} note
+   */
+  playNote(time, note) {
+    throw "playNote must be implemented in Unit subclasses";
+  }
 
   // Convenient untility functions for all units
 
+  /**
+   * Apply ADSR envelope to AudioNode parameter
+   *
+   * @param {number} time
+   * @param {number} duration
+   * @param {Object} adsr
+   * @param {AudioParam} param
+   * @param {number} minValue
+   * @param {number} amplitude
+   */
   applyADSR(time, duration, adsr, param, minValue, amplitude) {
     const releaseTime = time + ((duration < _eps) ? (adsr.attack + adsr.decay) : duration);
     const decayTime = time + adsr.attack;

@@ -89,8 +89,8 @@ class Sequencer {
     }
   }
 
-  callEventCallbacks(time, channelId, event) {
-    this.eventCallbacks.forEach((callback) => callback(time, channelId, event));
+  callEventCallbacks(channelId, event) {
+    this.eventCallbacks.forEach((callback) => callback(channelId, event));
   }
 
   /**
@@ -107,8 +107,8 @@ class Sequencer {
     }
 
     const offset = stepOffset * 256;
-    events.sort((a, b) => a.time - b.time);
-    events.forEach((event) => event.time += offset);
+    events.sort((a, b) => a.timeSteps - b.timeSteps);
+    events.forEach((event) => event.timeSteps += offset);
 
     Array.prototype.push.apply(this.events[channel.id], events)
   }
@@ -161,10 +161,12 @@ class Sequencer {
       let playedEvents = 0;
       for (let idx = 0; idx < events.length; idx++) {
         const event = events[idx];
-        let eventTime = (event.time / 256.0 - this.step) * this.stepLength + this.stepTime;
+        event.timeSeconds = (event.timeSteps / 256.0 - this.step) * this.stepLength + this.stepTime;
 
-        if (eventTime <= this.context.currentTime + this.scheduleAhead) {
-          this.handleEvent(this.channels[channelId], event, eventTime);
+        if (event.timeSeconds <= this.context.currentTime + this.scheduleAhead) {
+          this.callEventCallbacks(channelId, event);
+          event.data.durationSeconds = event.data.durationSteps / 256 * this.stepLength;
+          this.channels[channelId].handleEvent(event);
           playedEvents++;
         } else {
           break;
@@ -176,14 +178,5 @@ class Sequencer {
     }
 
     this.timerID = window.setTimeout(this.scheduler, this.period);
-  }
-
-  handleEvent(channel, event, time) {
-    this.callEventCallbacks(time, channel.id, event);
-
-    if (event.type == 'note') {
-      event.data.duration = event.data.duration / 256 * this.stepLength;
-      channel.unit.playNote(time, event.data);
-    }
   }
 }

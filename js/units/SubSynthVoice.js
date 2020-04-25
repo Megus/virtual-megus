@@ -65,8 +65,8 @@ class SubSynthVoice {
 
     this.velocity = note.velocity;
 
-    const endTime = this.unit.applyADSR(time, note.duration, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
-    this.unit.applyADSR(time, note.duration, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
+    const endTime = this.unit.applyADSR(time, note.durationSeconds, preset.ampEnvelope, this.gainNode.gain, 0, note.velocity);
+    this.unit.applyADSR(time, note.durationSeconds, preset.filterEnvelope, this.filterNode.frequency, preset.filter.cutoff, preset.filter.envelopeLevel);
 
     this.shutNote(endTime);
   }

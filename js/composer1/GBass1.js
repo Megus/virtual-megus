@@ -21,7 +21,15 @@ class GBass1 {
       const step = pattern[c];
       if (step != -1) {
         const pitch = state.scalePitches[state.chord + step + 7];
-        events.push({time: c * 256, type: 'note', data: {pitch: pitch, velocity: 0.7, duration: 0}});
+        events.push({
+          type: 'note',
+          timeSteps: c * 256,
+          data: {
+            pitch: pitch,
+            velocity: 0.7,
+            durationSteps: 0
+          }
+        });
       }
     }
 

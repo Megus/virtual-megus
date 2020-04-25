@@ -53,12 +53,12 @@ class GMelody1 {
       const step = pattern[c];
       if (step != -1) {
         events.push({
-          time: c * 256,
           type: 'note',
+          timeSteps: c * 256,
           data: {
             pitch: step,
             velocity: 0.7,
-            duration: 0
+            durationSteps: 0
           }
         });
       }

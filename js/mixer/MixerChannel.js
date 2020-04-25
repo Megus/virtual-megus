@@ -29,4 +29,11 @@ class MixerChannel {
     this.unit.output.disconnect();
     this.reverbSend.disconnect();
   }
+
+  handleEvent(event) {
+    if (event.type != "channel") {
+      this.unit.handleEvent(event);
+    }
+    // TODO: handle mixer events
+  }
 }

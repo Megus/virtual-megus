@@ -74,11 +74,11 @@ class Visualizer {
 
   // Sequencer events
   onStep(time, step) {
-    this.events.push({type: 'step', time: time, data: step});
+    this.events.push({type: "step", time: time, data: step});
   }
 
-  onEvent(time, channelId, event) {
-    this.events.push({type: event.type, time: time, channel: channelId, data: event.data});
+  onEvent(channelId, event) {
+    this.events.push({type: event.type, time: event.timeSeconds, channel: channelId, data: event.data});
   }
 
   // Main drawing function
@@ -116,7 +116,7 @@ class Visualizer {
     const events = this.events.filter(event => event.time <= currentTime);
 
     events.forEach((event) => {
-      if (event.type == 'step') {
+      if (event.type == "step") {
         this.handleStepEvent(event);
       } else {
         this.handleNoteEvent(event);

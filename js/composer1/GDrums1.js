@@ -81,12 +81,12 @@ class GDrums1 {
       for (let c = 0; c < hits.length; c++) {
         if (hits[c] != 0) {
           events.push({
-            time: c * 256,
             type: 'note',
+            timeSteps: c * 256,
             data: {
               pitch: instrumentMappings[instrument],
               velocity: hits[c],
-              duration: 0,
+              durationSteps: 0,
             }
           });
         }
