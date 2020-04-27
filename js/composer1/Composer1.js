@@ -50,7 +50,7 @@ class Composer1 extends Composer {
     this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1, 1, 0, 0);
     this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["pad"]), GPad1, 0.2, 1, 0.1);
     this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1, 0.4, 0.7, 0.2);
-    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["lead1"]), GMelody1, 0.7, 0.3, 0.2);
+    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["lead1"]), GMelody1, 0.9, 0.3, 0.2);
   }
 
   start() {
