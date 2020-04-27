@@ -57,7 +57,7 @@ class GMelody1 {
           timeSteps: c * 256,
           data: {
             pitch: step,
-            velocity: 0.7,
+            velocity: 1,
             durationSteps: 0
           }
         });

@@ -21,7 +21,7 @@ class GArp1 {
           timeSteps: c * 256,
           data: {
             pitch: pitch,
-            velocity: 0.4,
+            velocity: 1,
             durationSteps: 0
           }
         });

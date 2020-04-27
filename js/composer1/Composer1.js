@@ -20,11 +20,11 @@ class Composer1 extends Composer {
    * @param {Unit} unit
    * @param {function} generatorConstructor
    */
-  addUnit(unit, generatorConstructor) {
+  addUnit(unit, generatorConstructor, gain, reverb, delay) {
     const channel = new MixerChannel(unit);
-    if (unit.unitType == "drummach") {
-      channel.reverbSend.gain.value = 0.1;
-    }
+    channel.gainNode.gain.value = gain;
+    channel.unitReverbSend = reverb;
+    channel.delay.input.gain.value = delay;
     this.mixer.addChannel(channel);
     this.channels[channel.id] = channel;
     this.generatorConstructors[channel.id] = generatorConstructor;
@@ -46,11 +46,11 @@ class Composer1 extends Composer {
 
     drums.loadKit(kitInfo);
 
-    this.addUnit(drums, GDrums1);
-    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1);
-    this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["pad"]), GPad1);
-    this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1);
-    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["lead1"]), GMelody1);
+    this.addUnit(drums, GDrums1, 1, 0.1, 0);
+    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1, 1, 0, 0);
+    this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["pad"]), GPad1, 0.2, 1, 0.1);
+    this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1, 0.4, 0.7, 0.2);
+    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["lead1"]), GMelody1, 0.7, 0.3, 0.2);
   }
 
   start() {

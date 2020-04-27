@@ -11,9 +11,9 @@ class GPad1 {
     const pitch3 = state.scalePitches[state.chord + 28 + 4];
 
     const events = [
-      {timeSteps: 0, type: 'note', data: {pitch: pitch1, velocity: 0.2, durationSteps: 0xa00}},
-      {timeSteps: 0, type: 'note', data: {pitch: pitch2, velocity: 0.2, durationSteps: 0xa00}},
-      {timeSteps: 0, type: 'note', data: {pitch: pitch3, velocity: 0.2, durationSteps: 0xa00}},
+      {timeSteps: 0, type: 'note', data: {pitch: pitch1, velocity: 1, durationSteps: 0xa00}},
+      {timeSteps: 0, type: 'note', data: {pitch: pitch2, velocity: 1, durationSteps: 0xa00}},
+      {timeSteps: 0, type: 'note', data: {pitch: pitch3, velocity: 1, durationSteps: 0xa00}},
     ];
 
     return events;
