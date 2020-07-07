@@ -6,57 +6,66 @@
 'use strict';
 
 class Composer1 extends Composer {
+  /**
+   *
+   * @param {Mixer} mixer
+   * @param {Sequencer} sequencer
+   */
   constructor(mixer, sequencer) {
     super(mixer, sequencer);
     this.pitchTable = create12TETPitchTable(440.0);
-    this.generators = {};
-    this.generatorConstructors = {};
-    this.channels = {};
     this.stepCallback = this.stepCallback.bind(this);
   }
 
   /**
    *
    * @param {Unit} unit
-   * @param {function} generatorConstructor
+   * @param {number} gain
+   * @param {number} reverb
+   * @param {number} delay
    */
-  addUnit(unit, generatorConstructor, gain, reverb, delay) {
+  createChannel(unit, gain, reverb, delay) {
     const channel = new MixerChannel(unit);
     channel.gainNode.gain.value = gain;
     channel.unitReverbSend = reverb;
     channel.delay.input.gain.value = delay;
     this.mixer.addChannel(channel);
-    this.channels[channel.id] = channel;
-    this.generatorConstructors[channel.id] = generatorConstructor;
+    return channel;
   }
 
   async setupEnsemble() {
-    const drums = new DrumMachine(this.mixer.context);
+    const context = this.mixer.context;
+    const pitchTable = this.pitchTable;
 
-    const kitInfo = [
-      ['808-bass-drum.mp3'], // 0
-      ['808-clap.mp3'], // 1
-      ['808-rim-shot.mp3'], // 2
-      ['808-snare.mp3'], // 3
-      ['808-closed-hat.mp3'], // 4
-      ['808-open-hat.mp3'], // 5
-      ['808-clave.mp3'], // 6
-      ['808-cymbal.mp3'], // 7
-    ];
+    const pool = {
+      drums: [
+        this.createChannel(new DrumMachine(context, drumKits["tr808"]), 1, 0.1, 0),
+      ],
+      bass: [
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["bass"]), 1, 0, 0),
+      ],
+      pads: [
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad"]), 0.2, 1, 0.1),
+      ],
+      melody: [
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.2),
+      ],
+      arpeggio: [
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2),
+      ],
+    };
 
-    drums.loadKit(kitInfo);
-
-    this.addUnit(drums, GDrums1, 1, 0.1, 0);
-    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["bass"]), GBass1, 1, 0, 0);
-    this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["pad"]), GPad1, 0.2, 1, 0.1);
-    this.addUnit(new PolySynth(this.mixer.context, this.pitchTable, synthPresets["arp"]), GArp1, 0.4, 0.7, 0.2);
-    this.addUnit(new MonoSynth(this.mixer.context, this.pitchTable, synthPresets["lead1"]), GMelody1, 0.9, 0.3, 0.2);
+    this.pool = pool;
   }
 
   start() {
-    for (const channelId in this.channels) {
-      this.generators[channelId] = new this.generatorConstructors[channelId];
-    }
+    this.generators = {
+      drums: new GDrums1(),
+      bass: new GBass1(),
+      pads: new GPad1(),
+      melody: new GMelody1(),
+      arpeggio: new GArp1(),
+    };
 
     this.patternStep = 0;
 
@@ -66,7 +75,7 @@ class Composer1 extends Composer {
 
     // Add first patterns
     this.initState();
-    this.generateNextPatterns();
+    this.generatePatterns();
   }
 
   stop() {
@@ -82,39 +91,76 @@ class Composer1 extends Composer {
   initState() {
     const key = 0; // C
     const scale = 5; // Minor
-    const startingChord = 0;    // Starting with root
 
     this.state = {
       key: key,
       scale: scale,
-      chord: startingChord,
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
+
+    this.setupSection("intro");
   }
 
   stepCallback(time, step) {
-    if (step % 16 == 12) {
-      this.patternStep += 16;
+    if (step % this.state.patternLength == this.state.patternLength - 4) {
+      this.patternStep += this.state.patternLength;
       this.nextState();
-      this.generateNextPatterns();
+      this.generatePatterns();
     }
   }
 
-  generateNextPatterns() {
-    for (const channelId in this.channels) {
+  generatePatterns() {
+    console.log("Generating next patterns");
+    this.state.parts.forEach((part) => {
       this.sequencer.addEvents(
-        this.channels[channelId],
-        this.generators[channelId].nextEvents(this.state),
-        this.patternStep
+        this.pool[part][0],
+        this.generators[part].nextEvents(this.state),
+        this.patternStep,
       );
-    }
+    });
   }
 
-  nextState() {
-    let newChord = Math.floor(Math.random() * 6);
-    if (newChord == (13 - this.state.scale) % 7) {
-      newChord++;
+  expandHarmony(harmonyMap) {
+    const harmony = [];
+    for (let c = 0; c < this.state.patternLength; c++) {
+      harmony.push(-1);
     }
-    this.state.chord = newChord;
+    for (const step in harmonyMap) {
+      harmony[step] = harmonyMap[step];
+    }
+    let chord = harmony[0];
+    for (let c = 0; c < this.state.patternLength; c++) {
+      if (harmony[c] != -1) {
+        chord = harmony[c];
+      }
+      harmony[c] = chord;
+    }
+    return harmony;
+  }
+
+  /**
+   * Setup a new song section
+   * @param {string} name
+   */
+  setupSection(name) {
+    console.log("Setting up section " + name);
+    this.state.patternLength = 64;
+    this.state.harmony = this.expandHarmony({0: 7, 16: 5, 32: 6, 48: 0});
+    this.state.sectionPatterns = 4;
+    this.state.parts = ["drums", "bass", "melody"];
+  }
+
+  nextSection() {
+    this.setupSection("intro");
+  }
+
+  /**
+   * Next state
+   */
+  nextState() {
+    this.state.sectionPatterns--;
+    if (this.state.sectionPatterns <= 0) {
+      this.nextSection();
+    }
   }
 }

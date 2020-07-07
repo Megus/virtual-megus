@@ -74,15 +74,14 @@ class GDrums1 {
     return pattern;
   }
 
-  createEvents(pattern) {
-    const events = [];
+  createEvents(events, pattern, startStep) {
     for (let instrument in pattern) {
       const hits = pattern[instrument];
       for (let c = 0; c < hits.length; c++) {
         if (hits[c] != 0) {
           events.push({
             type: 'note',
-            timeSteps: c * 256,
+            timeSteps: (c + startStep) * 256,
             data: {
               pitch: instrumentMappings[instrument],
               velocity: hits[c],
@@ -92,7 +91,6 @@ class GDrums1 {
         }
       }
     }
-    return events;
   }
 
   prepareMutations(template) {
@@ -144,6 +142,11 @@ class GDrums1 {
       }
     }
 
-    return this.createEvents(this.pattern);
+    const events = [];
+    for (let c = 0; c < state.patternLength; c += 16) {
+      this.createEvents(events, this.pattern, c);
+    }
+
+    return events;
   }
 }

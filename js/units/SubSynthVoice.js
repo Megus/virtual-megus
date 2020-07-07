@@ -46,22 +46,26 @@ class SubSynthVoice {
   playNote(time, note) {
     const preset = this.unit.voicePreset;
 
-    // Apply panning
-    if (preset.panning != null) {
-      let pan = preset.panning.pan;
-      if (preset.panning.spread != null) {
-        pan += (note.pitch - preset.panning.centerPitch) * preset.panning.spread;
+    try {
+      // Apply panning
+      if (preset.panning != null) {
+        let pan = preset.panning.pan;
+        if (preset.panning.spread != null) {
+          pan += (note.pitch - preset.panning.centerPitch) * preset.panning.spread;
+        }
+
+        this.pannerNode.pan.setValueAtTime(this.unit.clamp(pan, -1, 1), time);
       }
 
-      this.pannerNode.pan.setValueAtTime(this.unit.clamp(pan, -1, 1), time);
-    }
-
-    try {
       for (let c = 0; c < this.oscBank.length; c++) {
         this.oscBank[c].frequency.setValueAtTime(this.unit.pitchTable[note.pitch + preset.osc[c].pitch], time);
         this.oscBank[c].start(time);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+      console.log(time);
+      console.log(note);
+    }
 
     this.velocity = note.velocity;
 

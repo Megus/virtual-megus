@@ -19,13 +19,13 @@ class GMelody1 {
   }
 
   nextEvents(state) {
-    const pattern = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    const events = [];
 
     if (this.pentatonic == null) {
       this.pentatonic = this.minorPentatonic(state.scalePitches, state.key);
     }
 
-    const runs = Math.floor(Math.random() * 4) + 1
+    const runs = Math.floor(Math.random() * state.patternLength / 4 + (state.patternLength / 16));
     let step = Math.floor(Math.random() * 4) * 2;
     let pitch = 20 + Math.floor(Math.random() * 10);
 
@@ -34,7 +34,16 @@ class GMelody1 {
 
       for (let d = 0; d < runLength; d++) {
         const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.8 ? 1 : 0);
-        pattern[step] = this.pentatonic[pitch] + blueNote;
+
+        events.push({
+          type: 'note',
+          timeSteps: step * 256,
+          data: {
+            pitch: this.pentatonic[pitch] + blueNote,
+            velocity: 1,
+            durationSteps: 0,
+          }
+        });
 
         pitch += Math.floor(Math.random() * 7) - 3;
         if (pitch < 20) { pitch += Math.floor(Math.random() * 4)};
@@ -43,25 +52,9 @@ class GMelody1 {
         if (Math.random() > 0.5) step++;
         step++;
 
-        if (step == 16) break;
+        if (step >= state.patternLength) break;
       }
-      if (step == 16) break;
-    }
-
-    const events = [];
-    for (let c = 0; c < pattern.length; c++) {
-      const step = pattern[c];
-      if (step != -1) {
-        events.push({
-          type: 'note',
-          timeSteps: c * 256,
-          data: {
-            pitch: step,
-            velocity: 1,
-            durationSteps: 0
-          }
-        });
-      }
+      if (step >= state.patternLength) break;
     }
 
     return events;

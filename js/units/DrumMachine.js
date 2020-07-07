@@ -6,17 +6,9 @@
 'use strict';
 
 class DrumMachine extends Unit {
-  constructor(context) {
+  constructor(context, kitInfo) {
     super(context, [], "drummach");
 
-    this.kit = [];
-
-    this.gainNode = context.createGain();
-    this.gainNode.gain.value = 1;
-    this.output = this.gainNode;
-  }
-
-  loadKit(kitInfo) {
     this.kit = [];
     for (let c = 0; c < kitInfo.length; c++) {
       const sampleSet = kitInfo[c];
@@ -26,6 +18,10 @@ class DrumMachine extends Unit {
       }
       this.kit.push(instrument);
     }
+
+    this.gainNode = context.createGain();
+    this.gainNode.gain.value = 1;
+    this.output = this.gainNode;
   }
 
   playNote(time, note) {

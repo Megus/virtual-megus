@@ -5,6 +5,19 @@
 
 'use strict';
 
+const drumKits = {
+  'tr808': [
+    ['808-bass-drum.mp3'], // 0
+    ['808-clap.mp3'], // 1
+    ['808-rim-shot.mp3'], // 2
+    ['808-snare.mp3'], // 3
+    ['808-closed-hat.mp3'], // 4
+    ['808-open-hat.mp3'], // 5
+    ['808-clave.mp3'], // 6
+    ['808-cymbal.mp3'], // 7
+  ],
+}
+
 const synthPresets = {
   // Basses
   'bass': {
