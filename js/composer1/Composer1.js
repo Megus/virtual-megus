@@ -44,14 +44,14 @@ class Composer1 extends Composer {
       bass: [
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["bass"]), 1, 0, 0),
       ],
-      pads: [
+      pad: [
         this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad"]), 0.2, 1, 0.1),
       ],
       melody: [
-        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.2),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2),
       ],
       arpeggio: [
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2),
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.2),
       ],
     };
 
@@ -62,7 +62,7 @@ class Composer1 extends Composer {
     this.generators = {
       drums: new GDrums1(),
       bass: new GBass1(),
-      pads: new GPad1(),
+      pad: new GPad1(),
       melody: new GMelody1(),
       arpeggio: new GArp1(),
     };
@@ -147,7 +147,7 @@ class Composer1 extends Composer {
     this.state.patternLength = 64;
     this.state.harmony = this.expandHarmony({0: 7, 16: 5, 32: 6, 48: 0});
     this.state.sectionPatterns = 4;
-    this.state.parts = ["drums", "bass", "melody"];
+    this.state.parts = ["drums", "arpeggio", "pad", "bass", "melody"];
   }
 
   nextSection() {

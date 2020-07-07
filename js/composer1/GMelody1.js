@@ -25,12 +25,12 @@ class GMelody1 {
       this.pentatonic = this.minorPentatonic(state.scalePitches, state.key);
     }
 
-    const runs = Math.floor(Math.random() * state.patternLength / 4 + (state.patternLength / 16));
+    const runs = Math.floor(Math.random() * state.patternLength / 4 + (state.patternLength / 12));
     let step = Math.floor(Math.random() * 4) * 2;
     let pitch = 20 + Math.floor(Math.random() * 10);
 
     for (let c = 0; c < runs; c++) {
-      const runLength = Math.floor(Math.random() * 4) + 1;
+      const runLength = Math.floor(Math.random() * 6) + 1;
 
       for (let d = 0; d < runLength; d++) {
         const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.8 ? 1 : 0);
@@ -54,6 +54,9 @@ class GMelody1 {
 
         if (step >= state.patternLength) break;
       }
+
+      step += Math.floor(Math.random() * 4 + 1);
+
       if (step >= state.patternLength) break;
     }
 
