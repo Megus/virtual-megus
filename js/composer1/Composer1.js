@@ -145,7 +145,7 @@ class Composer1 extends Composer {
   setupSection(name) {
     console.log("Setting up section " + name);
     this.state.patternLength = 64;
-    this.state.harmony = this.expandHarmony({0: 7, 16: 5, 32: 6, 48: 0});
+    this.state.harmony = this.expandHarmony({0: 7, 16: 5, 32: 6, 48: 4});
     this.state.sectionPatterns = 4;
     this.state.parts = ["drums", "arpeggio", "pad", "bass", "melody"];
   }
