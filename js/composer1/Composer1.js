@@ -142,7 +142,7 @@ class Composer1 extends Composer {
   // Actual composing logic
 
   initState() {
-    const key = 0; // C
+    const key = Math.floor(Math.random() * 12);
     const scale = 5; // Minor
 
     this.harmonies = {};
