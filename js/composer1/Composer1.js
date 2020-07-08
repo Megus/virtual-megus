@@ -49,10 +49,10 @@ class Composer1 extends Composer {
       ],
       melody: [
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2),
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.2),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.3),
       ],
       arpeggio: [
-        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.2),
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.4),
       ],
     };
 
