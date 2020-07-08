@@ -49,6 +49,7 @@ class Composer1 extends Composer {
       ],
       melody: [
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.2),
       ],
       arpeggio: [
         this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.2),
@@ -98,9 +99,18 @@ class Composer1 extends Composer {
 
   generatePatterns() {
     //console.log("Generating next patterns");
-    this.state.parts.forEach((part) => {
+    this.state.parts.forEach((partInfo) => {
+      let part = "";
+      let instrument = 0;
+      if (typeof partInfo == "string") {
+        part = partInfo;
+      } else {
+        part = partInfo[0];
+        instrument = partInfo[1];
+      }
+
       this.sequencer.addEvents(
-        this.pool[part][0],
+        this.pool[part][instrument],
         this.generators[part].nextEvents(this.state),
         this.patternStep,
       );
@@ -195,7 +205,7 @@ class Composer1 extends Composer {
       this.state.parts = ["drums", "bass", "pad", "melody"];
     } else if (name == "chorus") {
       this.state.sectionLength = 2;
-      this.state.parts = ["drums", "bass", "pad", "arpeggio", "melody"];
+      this.state.parts = ["drums", "bass", "pad", "arpeggio", ["melody", 1]];
     } else if (name == "bridge") {
       this.state.sectionLength = 1;
       this.state.parts = ["drums", "bass", "pad", "arpeggio"];

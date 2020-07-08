@@ -21,5 +21,6 @@ I'm going to document my progress in [my blog](https://megus.org) and [Twitter](
   - Primitive random arpeggio generator
   - Simple melody generator
   - Random chord progressions in the minor scale
+  - Simple song structure generator
 - UI:
   - Simple visualizer
