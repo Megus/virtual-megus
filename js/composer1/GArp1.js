@@ -28,14 +28,15 @@ class GArp1 {
     }
   }
 
-
   nextEvents(state) {
     const events = [];
 
     for (let c = 0; c < state.patternLength; c += 16) {
-      const step = Math.floor(Math.random() * 16);
-      this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 3) * 2) : -1;
-        this.createEvents(events, this.pattern, state, c);
+      for (let d = 0; d < 2; d++) {
+        const step = Math.floor(Math.random() * 16);
+        this.pattern[step] = this.pattern[step] == -1 ? (Math.floor(Math.random() * 3) * 2) : -1;
+      }
+      this.createEvents(events, this.pattern, state, c);
     }
 
     return events;

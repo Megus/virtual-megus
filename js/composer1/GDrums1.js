@@ -130,21 +130,37 @@ class GDrums1 {
     // On a note
     step = this.partStepOnDistribution[partName][Math.floor(Math.random() * this.partStepOnDistribution[partName].length)];
     pattern[partName][step] = 1;
+
+    // "Must have" kick on the first beat
+    pattern["kick"][0] = 1;
   }
 
   nextEvents(state) {
     if (this.pattern == null) {
       this.pattern = this.createInitialPattern();
-    } else {
-      const mutations = 4 + Math.floor(Math.random() * 4);
-      for (let c = 0; c < mutations; c++) {
-        this.mutatePattern(this.pattern);
-      }
     }
 
     const events = [];
     for (let c = 0; c < state.patternLength; c += 16) {
+      const mutations = 3 + Math.floor(Math.random() * 4);
+      for (let c = 0; c < mutations; c++) {
+        this.mutatePattern(this.pattern, state);
+      }
+
       this.createEvents(events, this.pattern, c);
+    }
+
+    // Add cymbal on the first section patters
+    if (state.sectionPattern == 0) {
+      events.push({
+        type: 'note',
+        timeSteps: 0,
+        data: {
+          pitch: instrumentMappings["cymbal"],
+          velocity: 1,
+          durationSteps: 0,
+        }
+      });
     }
 
     return events;
