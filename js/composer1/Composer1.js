@@ -216,11 +216,11 @@ class Composer1 extends Composer {
     } else if (current == "verse") {
       next = "chorus";
     } else if (current == "chorus") {
-      next = (Math.random() > 0.6) ? "verse" : "bridge";
+      next = (Math.random() > 0.7) ? "verse" : "bridge";
     } else if (current == "bridge") {
-      next = (Math.random() > 0.4) ? ((Math.random() > 0.5) ? "s1" : "s2") : "verse";
+      next = (Math.random() > 0.5) ? ((Math.random() > 0.5) ? "s1" : "s2") : "verse";
     } else if (current == "s1") {
-      next = (Math.random() > 0.6) ? "bridge" : "s2";
+      next = (Math.random() > 0.5) ? "bridge" : "s2";
     } else if (current == "s2") {
       next = (Math.random() > 0.5) ? "s1" : "bridge";
     }
