@@ -81,11 +81,12 @@ class Composer1 extends Composer {
 
   stop() {
     this.sequencer.removeStepCallback(this.stepCallback);
-    for (const channelId in this.channels) {
-      this.mixer.removeChannel(this.channels[channelId]);
+    for (const partId in this.pool) {
+      const part = this.pool[partId];
+      part.forEach((channel) => {
+        this.mixer.removeChannel(channel);
+      });
     }
-    this.channels = {};
-    this.generatorConstructors = {};
     this.generators = {};
   }
 
