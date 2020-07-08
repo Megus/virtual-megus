@@ -88,19 +88,6 @@ class Composer1 extends Composer {
     this.generators = {};
   }
 
-  initState() {
-    const key = 0; // C
-    const scale = 5; // Minor
-
-    this.state = {
-      key: key,
-      scale: scale,
-      scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
-    };
-
-    this.setupSection("intro");
-  }
-
   stepCallback(time, step) {
     if (step % this.state.patternLength == this.state.patternLength - 4) {
       this.patternStep += this.state.patternLength;
@@ -110,7 +97,7 @@ class Composer1 extends Composer {
   }
 
   generatePatterns() {
-    console.log("Generating next patterns");
+    //console.log("Generating next patterns");
     this.state.parts.forEach((part) => {
       this.sequencer.addEvents(
         this.pool[part][0],
@@ -138,19 +125,22 @@ class Composer1 extends Composer {
     return harmony;
   }
 
-  /**
-   * Setup a new song section
-   * @param {string} name
-   */
-  setupSection(name) {
-    console.log("Setting up section " + name);
-    this.state.patternLength = 64;
-    this.state.harmony = this.expandHarmony({0: 7, 16: 5, 32: 6, 48: 4});
-    this.state.sectionPatterns = 4;
-    this.state.parts = ["drums", "arpeggio", "pad", "bass", "melody"];
-  }
 
-  nextSection() {
+
+
+  // Actual composing logic
+
+  initState() {
+    const key = 0; // C
+    const scale = 5; // Minor
+
+    this.harmonies = {};
+    this.state = {
+      key: key,
+      scale: scale,
+      scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
+    };
+
     this.setupSection("intro");
   }
 
@@ -158,9 +148,83 @@ class Composer1 extends Composer {
    * Next state
    */
   nextState() {
-    this.state.sectionPatterns--;
-    if (this.state.sectionPatterns <= 0) {
+    this.state.sectionPattern++;
+    if (this.state.sectionPattern == this.state.sectionLength) {
       this.nextSection();
     }
+  }
+
+  randomChord() {
+    let chord = Math.floor(Math.random() * 7);
+    if (chord == (6 - this.state.scale)) {
+      chord += Math.floor(Math.random() * 3) + 1;
+    }
+    chord = chord % 7;
+
+    return chord;
+  }
+
+  generateHarmony(section) {
+    if (this.harmonies[section] == null) {
+      this.harmonies[section] = {
+        0: 0,
+        16: this.randomChord(),
+        32: this.randomChord(),
+        48: this.randomChord(),
+      }
+    }
+    return this.harmonies[section];
+  }
+
+  /**
+   * Setup a new song section
+   * @param {string} name
+   */
+  setupSection(name) {
+    console.log("Setting up section " + name);
+    this.state.section = name;
+    this.state.patternLength = 64;
+    this.state.harmony = this.expandHarmony(this.generateHarmony(name));
+    this.state.sectionPattern = 0;
+
+    if (name == "intro") {
+      this.state.sectionLength = 2;
+      this.state.parts = ["pad", "arpeggio"];
+    } else if (name == "verse") {
+      this.state.sectionLength = 2;
+      this.state.parts = ["drums", "bass", "pad", "melody"];
+    } else if (name == "chorus") {
+      this.state.sectionLength = 2;
+      this.state.parts = ["drums", "bass", "pad", "arpeggio", "melody"];
+    } else if (name == "bridge") {
+      this.state.sectionLength = 1;
+      this.state.parts = ["drums", "bass", "pad", "arpeggio"];
+    } else if (name == "s1") {
+      this.state.sectionLength = 2;
+      this.state.parts = ["drums", "bass", "arpeggio"];
+    } else if (name == "s2") {
+      this.state.sectionLength = 4;
+      this.state.parts = ["bass", "pad", "arpeggio"];
+    }
+  }
+
+  nextSection() {
+    const current = this.state.section;
+    let next = current;
+    if (current == "intro") {
+      next = (Math.random() > 0.3) ? "verse" : "bridge";
+    } else if (current == "verse") {
+      next = "chorus";
+    } else if (current == "chorus") {
+      next = (Math.random() > 0.6) ? "verse" : "bridge";
+    } else if (current == "bridge") {
+      next = (Math.random() > 0.4) ? ((Math.random() > 0.5) ? "s1" : "s2") : "verse";
+    } else if (current == "s1") {
+      next = (Math.random() > 0.6) ? "bridge" : "s2";
+    } else if (current == "s2") {
+      next = (Math.random() > 0.5) ? "s1" : "bridge";
+    }
+
+    this.setupSection(next);
   }
 }

@@ -33,13 +33,13 @@ class GMelody1 {
       const runLength = Math.floor(Math.random() * 6) + 1;
 
       for (let d = 0; d < runLength; d++) {
-        const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.8 ? 1 : 0);
+        //const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.8 ? 1 : 0);
 
         events.push({
           type: 'note',
           timeSteps: step * 256,
           data: {
-            pitch: this.pentatonic[pitch] + blueNote,
+            pitch: this.pentatonic[pitch]/* + blueNote*/,
             velocity: 1,
             durationSteps: 0,
           }
@@ -49,7 +49,7 @@ class GMelody1 {
         if (pitch < 20) { pitch += Math.floor(Math.random() * 4)};
         if (pitch >= this.pentatonic.length - 15) { pitch -= Math.floor(Math.random() * 4)};
 
-        if (Math.random() > 0.5) step++;
+        if (Math.random() > 0.4) step++;
         step++;
 
         if (step >= state.patternLength) break;
