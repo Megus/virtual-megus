@@ -6,15 +6,11 @@
 'use strict';
 
 class Composer1 extends Composer {
-  /**
-   *
-   * @param {Mixer} mixer
-   * @param {Sequencer} sequencer
-   */
-  constructor(mixer, sequencer) {
-    super(mixer, sequencer);
+  constructor() {
+    super();
     this.pitchTable = create12TETPitchTable(440.0);
     this.stepCallback = this.stepCallback.bind(this);
+    this.visualizers = {};
   }
 
   /**
@@ -24,35 +20,38 @@ class Composer1 extends Composer {
    * @param {number} reverb
    * @param {number} delay
    */
-  createChannel(unit, gain, reverb, delay) {
+  createChannel(unit, gain, reverb, delay, visualConstructor) {
     const channel = new MixerChannel(unit);
     channel.gainNode.gain.value = gain;
     channel.unitReverbSend = reverb;
     channel.delay.input.gain.value = delay;
-    this.mixer.addChannel(channel);
+    core.mixer.addChannel(channel);
+    const visualLayer = new visualConstructor(channel.id);
+    this.visualizers[channel.id] = visualLayer;
+    core.visualizer.addLayer(visualLayer);
     return channel;
   }
 
   async setupEnsemble() {
-    const context = this.mixer.context;
+    const context = core.mixer.context;
     const pitchTable = this.pitchTable;
 
     const pool = {
       drums: [
-        this.createChannel(new DrumMachine(context, drumKits["tr808"]), 1, 0.1, 0),
+        this.createChannel(new DrumMachine(context, drumKits["tr808"]), 1, 0.1, 0, VDots),
       ],
       bass: [
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["bass"]), 1, 0, 0),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["bass"]), 1, 0, 0, VTriangles),
       ],
       pad: [
-        this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad"]), 0.2, 1, 0.1),
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad"]), 0.2, 1, 0.1, VTriangles),
       ],
       melody: [
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2),
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.3),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2, VTriangles),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.3, VTriangles),
       ],
       arpeggio: [
-        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.4),
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.4, VTriangles),
       ],
     };
 
@@ -71,7 +70,7 @@ class Composer1 extends Composer {
     this.patternStep = 0;
 
     // Prepare sequencer
-    this.sequencer.addStepCallback(this.stepCallback);
+    core.sequencer.addStepCallback(this.stepCallback);
 
     // Add first patterns
     this.initState();
@@ -79,11 +78,11 @@ class Composer1 extends Composer {
   }
 
   stop() {
-    this.sequencer.removeStepCallback(this.stepCallback);
+    core.sequencer.removeStepCallback(this.stepCallback);
     for (const partId in this.pool) {
       const part = this.pool[partId];
       part.forEach((channel) => {
-        this.mixer.removeChannel(channel);
+        core.mixer.removeChannel(channel);
       });
     }
     this.generators = {};
@@ -109,7 +108,7 @@ class Composer1 extends Composer {
         instrument = partInfo[1];
       }
 
-      this.sequencer.addEvents(
+      core.sequencer.addEvents(
         this.pool[part][instrument],
         this.generators[part].nextEvents(this.state),
         this.patternStep,
@@ -141,7 +140,7 @@ class Composer1 extends Composer {
   // Actual composing logic
 
   initState() {
-    this.sequencer.setBPM(100 + Math.floor(Math.random() * 40));
+    core.sequencer.setBPM(100 + Math.floor(Math.random() * 40));
 
     const key = Math.floor(Math.random() * 12);
     const scale = 5; // Minor

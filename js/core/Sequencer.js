@@ -8,12 +8,8 @@
 class Sequencer {
   /**
    * Sequencer constructor
-   *
-   * @param {AudioContext} context WebAudio Context
    */
-  constructor(context) {
-    this.context = context;
-
+  constructor() {
     this.period = 25.0; // ms
     this.scheduleAhead = 0.1; // s
 
@@ -129,7 +125,7 @@ class Sequencer {
   // Play/resume
   play() {
     this.isStopped = false;
-    this.stepTime = this.context.currentTime;
+    this.stepTime = core.mixer.context.currentTime;
     this.calledStepCallback = false;
     this.callStepCallbacks(this.stepTime, this.step);
     this.scheduler();
@@ -143,7 +139,7 @@ class Sequencer {
   scheduler() {
     if (this.isStopped) { return; }
 
-    const currentTime = this.context.currentTime;
+    const currentTime = core.mixer.context.currentTime;
     if (currentTime + this.scheduleAhead >= this.stepTime + this.stepLength) {
       this.callStepCallbacks(this.stepTime + this.stepLength, this.step + 1);
     }
@@ -163,7 +159,7 @@ class Sequencer {
         const event = events[idx];
         event.timeSeconds = (event.timeSteps / 256.0 - this.step) * this.stepLength + this.stepTime;
 
-        if (event.timeSeconds <= this.context.currentTime + this.scheduleAhead) {
+        if (event.timeSeconds <= core.mixer.context.currentTime + this.scheduleAhead) {
           this.callEventCallbacks(channelId, event);
           event.data.durationSeconds = event.data.durationSteps / 256 * this.stepLength;
           this.channels[channelId].handleEvent(event);

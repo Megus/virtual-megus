@@ -5,37 +5,43 @@
 
 'use strict';
 
-class Conductor {
+class Core {
   constructor() {
-  }
+    this.sequencer = new Sequencer();
+    this.visualizer = new Visualizer("visuals");
+    this.audioFileManager = new AudioFileManager();
 
-  /**
-   * Set main visualizer
-   *
-   * @param {Object} visualizer
-   */
-  setVisualizer(visualizer) {
-    this.visualizer = visualizer;
+    this.sequencer.addStepCallback(this.visualizer.onStep);
+    this.sequencer.addEventCallback(this.visualizer.onEvent);
+
+    this.visualizer.addLayer(new VCommon());
+    this.visualizer.addLayer(new VMegusLogo());
+
+    this.firstPlay = true;
   }
 
   /**
    * Start playing or resume playback after pause
    */
-  async play() {
-    if (this.mixer == null) {
+  async play(composer) {
+    if (this.firstPlay) {
+      this.firstPlay = false;
+
+      // Initialize Mixer only after user action, because it's a browser requirement
       this.mixer = new Mixer();
-      this.sequencer = new Sequencer(this.mixer.context);
-      this.mixer.addRemoveChannelCallback(this.visualizer.onRemoveChannel);
-      this.visualizer.setSequencer(this.sequencer);
       this.visualizer.setValuesProvider(this.mixer.getValuesForVisuals);
-      this.audioFileManager = new AudioFileManager();
+
       await this.audioFileManager.loadAudioFiles(this.mixer.context, this.visualizer.setLoadingProgress);
       this.visualizer.setLoadingProgress(0);
       this.mixer.setMasterReverbImpulse(this.audioFileManager.audioBuffers["SteinmanFoundationRecordingSuite.wav"]);
     }
 
-    if (this.composer == null) {
-      this.composer = new Composer1(this.mixer, this.sequencer);
+    if (this.composer != composer) {
+      if (this.composer != null) {
+        this.composer.stop();
+        this.sequencer.reset();
+      }
+      this.composer = composer;
       await this.composer.setupEnsemble();
       this.composer.start();
     }

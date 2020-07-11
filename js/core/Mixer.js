@@ -12,8 +12,6 @@ class Mixer {
       this.context = new AudioContext();
 
       this.channels = [];
-      this.addChannelCallbacks = [];
-      this.removeChannelCallbacks = [];
       this.getValuesForVisuals = this.getValuesForVisuals.bind(this);
 
       // Setup master bus elements
@@ -47,33 +45,10 @@ class Mixer {
     this.masterReverb.buffer = buffer;
   }
 
-  addAddChannelCallback(callback) {
-    this.addChannelCallbacks.push(callback);
-  }
-
-  removeAddChannelCallback(callback) {
-    const index = this.addChannelCallbacks.indexOf(callback);
-    if (index != -1) {
-      this.addChannelCallbacks.splice(index, 1);
-    }
-  }
-
-  addRemoveChannelCallback(callback) {
-    this.removeChannelCallbacks.push(callback);
-  }
-
-  removeRemoveChannelCallback(callback) {
-    const index = this.removeChannelCallbacks.indexOf(callback);
-    if (index != -1) {
-      this.removeChannelCallbacks.splice(index, 1);
-    }
-  }
-
   addChannel(channel) {
     channel.output.connect(this.masterBusInput);
     channel.reverbSend.connect(this.masterReverb);
     this.channels.push(channel);
-    this.addChannelCallbacks.forEach((callback) => callback(channel));
     return channel;
   }
 
@@ -82,7 +57,6 @@ class Mixer {
     const index = this.channels.indexOf(channel);
     if (index != -1) {
       this.channels.splice(index, 1);
-      this.removeChannelCallbacks.forEach((callback) => callback(channel));
     }
   }
 

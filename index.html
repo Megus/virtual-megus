@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta property="og:title" content="Virtual Megus">
   <meta property="og:locale" content="en_US">
-  <meta name="description" content="An experiment with procedural music">
-  <meta property="og:description" content="An experiment with procedural music">
+  <meta name="description" content="An experiment with generative music">
+  <meta property="og:description" content="An experiment with generative music">
   <link rel="canonical" href="https://megus.org/virtual-megus">
   <meta property="og:url" content="https://megus.org/virtual-megus">
   <meta property="og:site_name" content="Virtual Megus">
@@ -17,37 +17,41 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@sugem">
   <meta name="twitter:creator" content="@sugem">
-  <script type="application/ld+json">{"description":"An experiment with procedural music","@type":"WebPage","url":"https://megus.org/virtual-megus","image":"https://megus.org/virtual-megus/assets/virtual-megus.jpg","headline":"Virtual Megus","@context":"http://schema.org"}</script>
+  <script type="application/ld+json">{"description":"An experiment with generative music","@type":"WebPage","url":"https://megus.org/virtual-megus","image":"https://megus.org/virtual-megus/assets/virtual-megus.jpg","headline":"Virtual Megus","@context":"http://schema.org"}</script>
 
   <script type="text/javascript" src="js/main.js"></script>
-  <script type="text/javascript" src="js/utils.js"></script>
-  <script type="text/javascript" src="js/Conductor.js"></script>
-  <script type="text/javascript" src="js/Sequencer.js"></script>
-  <script type="text/javascript" src="js/Composer.js"></script>
-  <script type="text/javascript" src="js/AudioFileManager.js"></script>
 
-  <script type="text/javascript" src="js/mixer/Mixer.js"></script>
-  <script type="text/javascript" src="js/mixer/MixerChannel.js"></script>
+  <script type="text/javascript" src="js/core/AudioFileManager.js"></script>
+  <script type="text/javascript" src="js/core/Composer.js"></script>
+  <script type="text/javascript" src="js/core/Core.js"></script>
+  <script type="text/javascript" src="js/core/FX.js"></script>
+  <script type="text/javascript" src="js/core/Mixer.js"></script>
+  <script type="text/javascript" src="js/core/MixerChannel.js"></script>
+  <script type="text/javascript" src="js/core/Sequencer.js"></script>
+  <script type="text/javascript" src="js/core/Unit.js"></script>
+  <script type="text/javascript" src="js/core/utils.js"></script>
+  <script type="text/javascript" src="js/core/VisualLayer.js"></script>
+  <script type="text/javascript" src="js/core/Visualizer.js"></script>
 
+  <script type="text/javascript" src="js/fx/Delay.js"></script>
+
+  <script type="text/javascript" src="js/units/SubSynthVoice.js"></script>
+  <script type="text/javascript" src="js/units/MonoSynth.js"></script>
+  <script type="text/javascript" src="js/units/PolySynth.js"></script>
+  <script type="text/javascript" src="js/units/DrumMachine.js"></script>
+
+  <script type="text/javascript" src="js/visuals/VCommon.js"></script>
+  <script type="text/javascript" src="js/visuals/VDots.js"></script>
+  <script type="text/javascript" src="js/visuals/VMegusLogo.js"></script>
+  <script type="text/javascript" src="js/visuals/VTriangles.js"></script>
+
+  <script type="text/javascript" src="js/units/SynthPresets.js"></script>
   <script type="text/javascript" src="js/composer1/Composer1.js"></script>
   <script type="text/javascript" src="js/composer1/GDrums1.js"></script>
   <script type="text/javascript" src="js/composer1/GBass1.js"></script>
   <script type="text/javascript" src="js/composer1/GArp1.js"></script>
   <script type="text/javascript" src="js/composer1/GPad1.js"></script>
   <script type="text/javascript" src="js/composer1/GMelody1.js"></script>
-
-  <script type="text/javascript" src="js/visuals/Visualizer.js"></script>
-
-  <script type="text/javascript" src="js/fx/FX.js"></script>
-  <script type="text/javascript" src="js/fx/Delay.js"></script>
-
-  <script type="text/javascript" src="js/units/Unit.js"></script>
-  <script type="text/javascript" src="js/units/SubSynthVoice.js"></script>
-  <script type="text/javascript" src="js/units/MonoSynth.js"></script>
-  <script type="text/javascript" src="js/units/PolySynth.js"></script>
-  <script type="text/javascript" src="js/units/DrumMachine.js"></script>
-
-  <script type="text/javascript" src="js/units/SynthPresets.js"></script>
 
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-104711057-2"></script>
 	<script>

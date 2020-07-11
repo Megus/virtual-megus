@@ -14,7 +14,7 @@ class DrumMachine extends Unit {
       const sampleSet = kitInfo[c];
       let instrument = [];
       for (let d = 0; d < sampleSet.length; d++) {
-        instrument.push(sharedConductor.audioFileManager.audioBuffers[sampleSet[d]]);
+        instrument.push(core.audioFileManager.audioBuffers[sampleSet[d]]);
       }
       this.kit.push(instrument);
     }

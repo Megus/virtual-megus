@@ -48,6 +48,5 @@ class Delay extends FX {
     this.delay2.connect(this.panner2);
     this.panner1.connect(this.output);
     this.panner2.connect(this.output);
-
   }
 }

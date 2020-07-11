@@ -1,3 +1,7 @@
+July 9, 2020
+
+- Added simple song strucutre generator
+
 April 12, 2020
 
 - Added Pause button
