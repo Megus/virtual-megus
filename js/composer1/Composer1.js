@@ -28,7 +28,7 @@ class Composer1 extends Composer {
     core.mixer.addChannel(channel);
     const visualLayer = new visualConstructor(channel.id);
     this.visualizers[channel.id] = visualLayer;
-    core.visualizer.addLayer(visualLayer);
+    core.visualizer.addLayer(visualLayer, 0);
     return channel;
   }
 
@@ -83,6 +83,7 @@ class Composer1 extends Composer {
       const part = this.pool[partId];
       part.forEach((channel) => {
         core.mixer.removeChannel(channel);
+        core.visualizer.removeLayer(this.visualizers[channel.id]);
       });
     }
     this.generators = {};
@@ -140,7 +141,7 @@ class Composer1 extends Composer {
   // Actual composing logic
 
   initState() {
-    core.sequencer.setBPM(100 + Math.floor(Math.random() * 40));
+    core.sequencer.setBPM(100 + Math.floor(Math.random() * 30));
 
     const key = Math.floor(Math.random() * 12);
     const scale = 5; // Minor
@@ -192,7 +193,6 @@ class Composer1 extends Composer {
    * @param {string} name
    */
   setupSection(name) {
-    console.log("Setting up section " + name);
     this.state.section = name;
     this.state.patternLength = 64;
     this.state.harmony = this.expandHarmony(this.generateHarmony(name));
@@ -217,6 +217,7 @@ class Composer1 extends Composer {
       this.state.sectionLength = (Math.random() > 0.6) ? 2 : 4;
       this.state.parts = ["bass", "pad", "arpeggio"];
     }
+    console.log(`Section: ${name}, length: ${this.state.sectionLength} patterns`);
   }
 
   nextSection() {

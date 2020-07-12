@@ -58,7 +58,7 @@ const synthPresets = {
 
   // Pad
   'pad': {
-    ampEnvelope: {attack: 0.4, decay: 2, sustain: 0.8, release: 2},
+    ampEnvelope: {attack: 0.7, decay: 2, sustain: 0.8, release: 2},
     filterEnvelope: {attack: 0.5, decay: 2, sustain: 0.4, release: 2},
     filter: {cutoff: 3000, resonance: 1, envelopeLevel: 500, type: 'lowpass'},
     panning: {pan: -0.2, centerPitch: 48, spread: 0.03},

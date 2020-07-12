@@ -14,8 +14,8 @@ class Core {
     this.sequencer.addStepCallback(this.visualizer.onStep);
     this.sequencer.addEventCallback(this.visualizer.onEvent);
 
-    this.visualizer.addLayer(new VCommon());
-    this.visualizer.addLayer(new VMegusLogo());
+    this.visualizer.addLayer(new VCommon(), -1);
+    this.visualizer.addLayer(new VMegusLogo(), 1000);
 
     this.firstPlay = true;
   }

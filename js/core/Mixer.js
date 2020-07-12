@@ -61,8 +61,15 @@ class Mixer {
   }
 
   getValuesForVisuals() {
-    return {
+    const values = {
       compressor: this.masterCompressor.reduction,
-    }
+      levels: {},
+    };
+
+    this.channels.forEach((channel) => {
+      values.levels[channel.id] = channel.unit.getAudioLevel();
+    });
+
+    return values;
   }
 }

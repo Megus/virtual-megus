@@ -45,6 +45,13 @@ class Unit {
     throw "playNote must be implemented in Unit subclasses";
   }
 
+  /**
+   * Get audio level (or something similar to audio level)
+   */
+  getAudioLevel() {
+    return 0;
+  }
+
   // Convenient untility functions for all units
 
   /**

@@ -31,4 +31,8 @@ class PolySynth extends Unit {
 			this.voices.splice(idx, 1);
 		}
 	}
+
+  getAudioLevel() {
+    return this.voices.reduce((prev, voice) => prev + voice.getAudioLevel(), 0);
+  }
 }

@@ -21,15 +21,13 @@ class Visualizer {
     window.requestAnimationFrame(this.draw);
   }
 
-  addLayer(layer) {
-    this.layers.push(layer);
+  addLayer(layer, zIndex) {
+    this.layers.push({z: zIndex, layer: layer});
+    this.layers.sort((a, b) => a.z - b.z);
   }
 
   removeLayer(layer) {
-    const index = this.layers.indexOf(layer);
-    if (index != -1) {
-      this.layers.splice(index, 1);
-    }
+    this.layers = this.layers.filter(l => l.layer != layer);
   }
 
   /**
@@ -86,9 +84,9 @@ class Visualizer {
 
     events.forEach((event) => {
       if (event.type == "step") {
-        this.layers.forEach(layer => layer.onStep(event.data));
+        this.layers.forEach(l => l.layer.onStep(event.data));
       } else {
-        this.layers.forEach(layer => layer.onEvent(event));
+        this.layers.forEach(l => l.layer.onEvent(event));
       }
     });
 
@@ -96,9 +94,9 @@ class Visualizer {
 
     // Draw layers
     const immediateValues = (this.valuesProvider != null) ? this.valuesProvider() : {};
-    this.layers.forEach((layer) => {
+    this.layers.forEach((l) => {
       ctx.save();
-      layer.draw(ctx, dTime, immediateValues);
+      l.layer.draw(ctx, dTime, immediateValues);
       ctx.restore();
     });
 

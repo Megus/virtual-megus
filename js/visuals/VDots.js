@@ -22,7 +22,7 @@ class VDots extends VisualLayer {
         y: Math.random(),
         radius: event.data.velocity * 0.1,
         color: this.dotColors[Math.floor(event.data.pitch / 12)],
-        speed: 0.1
+        speed: 0.2
       });
     }
   }
@@ -40,7 +40,7 @@ class VDots extends VisualLayer {
       ctx.fill();
 
       dot.radius -= dot.speed * dTime;
-      dot.speed += 0.1 * dTime;
+      dot.speed += 0.3 * dTime;
     });
 
     this.dots = this.dots.filter(dot => dot.radius > 0);

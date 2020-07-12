@@ -23,6 +23,7 @@ class SubSynthVoice {
 
     this.pannerNode = context.createStereoPanner();
     this.gainNode = context.createGain();
+    this.gainNode.gain.value = 0;
 
     this.filterNode.connect(this.pannerNode);
     this.pannerNode.connect(this.gainNode);
@@ -81,5 +82,9 @@ class SubSynthVoice {
         this.oscBank[c].stop(time);
       } catch (e) {}
     }
+  }
+
+  getAudioLevel() {
+    return this.gainNode.gain.value;
   }
 }
