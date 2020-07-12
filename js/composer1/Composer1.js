@@ -74,7 +74,7 @@ class Composer1 extends Composer {
 
     // Add first patterns
     this.initState();
-    this.generatePatterns();
+    this.state.parts.forEach((partInfo) => this.generatePattern(partInfo));
   }
 
   stop() {
@@ -90,31 +90,37 @@ class Composer1 extends Composer {
   }
 
   stepCallback(time, step) {
-    if (step % this.state.patternLength == this.state.patternLength - 4) {
-      this.patternStep += this.state.patternLength;
-      this.nextState();
-      this.generatePatterns();
+    const patternStep = step % this.state.patternLength;
+
+    if (patternStep > 4) {
+      if (this.partToGenerate == -1) {
+        this.patternStep += this.state.patternLength;
+        this.nextState();
+        this.partToGenerate++;
+      } else if (this.partToGenerate < this.state.parts.length) {
+        this.generatePattern(this.state.parts[this.partToGenerate]);
+        this.partToGenerate++;
+      }
+    } else {
+      this.partToGenerate = -1;
     }
   }
 
-  generatePatterns() {
-    //console.log("Generating next patterns");
-    this.state.parts.forEach((partInfo) => {
-      let part = "";
-      let instrument = 0;
-      if (typeof partInfo == "string") {
-        part = partInfo;
-      } else {
-        part = partInfo[0];
-        instrument = partInfo[1];
-      }
+  generatePattern(partInfo) {
+    let part = "";
+    let instrument = 0;
+    if (typeof partInfo == "string") {
+      part = partInfo;
+    } else {
+      part = partInfo[0];
+      instrument = partInfo[1];
+    }
 
-      core.sequencer.addEvents(
-        this.pool[part][instrument],
-        this.generators[part].nextEvents(this.state),
-        this.patternStep,
-      );
-    });
+    core.sequencer.addEvents(
+      this.pool[part][instrument],
+      this.generators[part].nextEvents(this.state),
+      this.patternStep,
+    );
   }
 
   expandHarmony(harmonyMap) {
