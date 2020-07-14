@@ -30,7 +30,7 @@ class AudioFileManager {
       const path = this.filePaths[d];
       const response = await fetch("audio/" + path);
       const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await context.decodeAudioData(arrayBuffer);
+      const audioBuffer = await new Promise((resolve, reject) => context.decodeAudioData(arrayBuffer, resolve, reject));
       const fileName = path.split("/").pop();
       this.audioBuffers[fileName] = audioBuffer;
     }
