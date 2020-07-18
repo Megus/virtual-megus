@@ -153,6 +153,7 @@ class Composer1 extends Composer {
     const scale = 5; // Minor
 
     this.harmonies = {};
+    this.harmonyGenerator = new Harmony(key, scale);
     this.state = {
       key: key,
       scale: scale,
@@ -172,24 +173,9 @@ class Composer1 extends Composer {
     }
   }
 
-  randomChord() {
-    let chord = Math.floor(Math.random() * 7);
-    if (chord == (6 - this.state.scale)) {
-      chord += Math.floor(Math.random() * 3) + 1;
-    }
-    chord = chord % 7;
-
-    return chord;
-  }
-
   generateHarmony(section) {
     if (this.harmonies[section] == null) {
-      this.harmonies[section] = {
-        0: 0,
-        16: this.randomChord(),
-        32: this.randomChord(),
-        48: this.randomChord(),
-      }
+      this.harmonies[section] = this.harmonyGenerator.generateHarmony();
     }
     return this.harmonies[section];
   }

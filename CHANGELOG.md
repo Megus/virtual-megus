@@ -1,3 +1,7 @@
+July 18, 2020
+
+- Added chord sequence generator based on T→S→D→T rule
+
 July 9, 2020
 
 - Added simple song strucutre generator
