@@ -4,43 +4,29 @@ class Harmony {
     this.scale = scale;
 
     this.sequences = [
-      [1, 5, 1, 5],
-      [5, 1, 5, 1],
-      [1, 5, 5, 1],
-      [1, 4, 1, 4],
-      [4, 1, 4, 1],
-      [1, 4, 5, 1],
+      {0: 1, 16: 5, 32: 1, 48: 5},
+      {0: 5, 16: 1, 32: 5, 48: 1},
+      {0: 1, 16: 5, 32: 5, 48: 1},
+      {0: 1, 16: 4, 32: 1, 48: 4},
+      {0: 4, 16: 1, 32: 4, 48: 1},
+      {0: 1, 16: 4, 32: 5, 48: 1},
     ];
-  }
-
-  randomChord() {
-    let chord = Math.floor(Math.random() * 7);
-    if (chord == (6 - this.scale)) {
-      chord += Math.floor(Math.random() * 3) + 1;
-    }
-    chord = chord % 7;
-
-    return chord;
   }
 
   generateHarmony() {
     const sequence = this.sequences[Math.floor(Math.random() * this.sequences.length)];
-    let step = 0;
     let harmony = {};
 
-    for (let c = 0; c < sequence.length; c++) {
-      let chord = sequence[c] - 1;
+    for (let step in sequence) {
+      let chord = sequence[step] - 1;
       let variation = (Math.floor(Math.random() * 3) - 1) * 2;
 
       if (chord + variation != (6 - this.scale)) {
         chord += variation;
       }
 
-      harmony[step] = chord;
-      step += 16;
+      harmony[step] = [chord, chord + 2, chord + 4];
     }
-
-    //console.log(harmony);
 
     return harmony;
   }

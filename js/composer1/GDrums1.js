@@ -101,34 +101,22 @@ class GDrums1 {
       const part = template[partName];
       for (let c = 0; c < part.weight; c++) {
         this.partDistribution.push(partName);
-
-        const offDistribution = [];
-        const onDistribution = [];
-        for (let d = 0; d < part.on.length; d++) {
-          for (let e = 0; e < part.on[d]; e++) {
-            onDistribution.push(d);
-          }
-          for (let e = 0; e < part.off[d]; e++) {
-            offDistribution.push(d);
-          }
-        }
-
-        this.partStepOnDistribution[partName] = onDistribution;
-        this.partStepOffDistribution[partName] = offDistribution;
       }
+      this.partStepOnDistribution[partName] = wrndPrepare(part.on);
+      this.partStepOffDistribution[partName] = wrndPrepare(part.off);
     }
   }
 
   mutatePattern(pattern) {
     // Pick part for mutation
-    const partName = this.partDistribution[Math.floor(Math.random() * this.partDistribution.length)];
+    const partName = wrnd(this.partDistribution);
 
     // Off a note
-    let step = this.partStepOffDistribution[partName][Math.floor(Math.random() * this.partStepOffDistribution[partName].length)];
+    let step = wrnd(this.partStepOffDistribution[partName]);
     pattern[partName][step] = 0;
 
     // On a note
-    step = this.partStepOnDistribution[partName][Math.floor(Math.random() * this.partStepOnDistribution[partName].length)];
+    step = wrnd(this.partStepOnDistribution[partName]);
     pattern[partName][step] = 1;
 
     // "Must have" kick on the first beat

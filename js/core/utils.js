@@ -66,3 +66,41 @@ function create12TETPitchTable(A4Freq) {
 
   return pitches;
 }
+
+
+/**
+ * Prepare array for weighted random numbers
+ */
+function wrndPrepare(weights) {
+  // TODO: Add support not only for weight arrays, but also for weight maps
+  const distribution = [];
+  for (let c = 0; c < weights.length; c++) {
+    for (let d = 0; d < weights[c]; d++) {
+      distribution.push(c);
+    }
+  }
+  return distribution;
+}
+
+/**
+ * Weighted random
+ *
+ * @param {Array} distribution
+ */
+function wrnd(distribution) {
+  return distribution[Math.floor(Math.random() * distribution.length)];
+}
+
+function rndRange(range) {
+  return Math.floor(Math.random() * (1 + range.max - range.min) + range.min);
+}
+
+function rndSign() {
+  return (Math.random() < 0.5) ? -1 : 1;
+}
+
+function scaleStep(pitch, scaleLength) {
+  let step = pitch % scaleLength;
+  if (step < 0) step += scaleLength;
+  return step;
+}

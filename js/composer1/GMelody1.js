@@ -1,63 +1,89 @@
 'use strict';
 
+const melodyPresets = [
+  {
+    noteLengthWeights: [4, 8, 1, 3], // 2 for 1/16, 4 for 1/8, 1 for 1/8., 3 for 1/4
+    noteStepWeights: [2, 5, 3, 1, 0, 0, 0],
+    restLengthWeights: [1, 2, 1, 4, 1, 1, 1, 1],
+    runLength: {min: 4, max: 8},
+  }
+];
+
 class GMelody1 {
   constructor() {
-    this.pentatonic = null;
+    this.preset = null;
+    this.prepareForPreset(melodyPresets[0]);
   }
 
-  minorPentatonic(pitches, key) {
-    const pentatonic = [];
+  prepareForPreset(preset) {
+    if (preset == this.preset) return;
+    this.preset = preset;
 
-    for (let c = 0; c < pitches.length; c++) {
-      const step = c % 7;
-      if (step != 1 && step != 5) {
-        pentatonic.push(pitches[c]);
-      }
-    }
+    this.noteLengthDistribution = wrndPrepare(preset.noteLengthWeights);
+    this.restLengthDistribution = wrndPrepare(preset.restLengthWeights);
+    this.noteStepDistribution = wrndPrepare(preset.noteStepWeights);
+  }
 
-    return pentatonic;
+  isGoodPitch(state, pitch, duration, pitches, currentChord, lastInPhrase) {
+    const cPitches = [0, 0, 0, 0, 0, 0, 0];
+    currentChord.forEach((pitch) => cPitches[scaleStep(pitch, 7)]++);
+
+    const pitchStep = scaleStep(pitch, 7);
+
+    if (lastInPhrase && cPitches[pitchStep] == 0) return false;
+
+    if (cPitches[pitchStep] == 0 && pitches[pitchStep] == 0) return false;
+    if (cPitches[pitchStep] != 0) return true;
+    if (pitches[pitchStep] > (duration == 1 ? 0 : 1)) return true;
+
+    return false;
   }
 
   nextEvents(state) {
     const events = [];
 
-    if (this.pentatonic == null) {
-      this.pentatonic = this.minorPentatonic(state.scalePitches, state.key);
+    let step = rndRange({min: 0, max: 4}) * 2;
+
+    const pitches = [0, 0, 0, 0, 0, 0, 0];
+    // Analyze harmony
+    for (let step in state.harmonyMap) {
+      const chord = state.harmonyMap[step];
+      chord.forEach((pitch) => pitches[scaleStep(pitch, 7)]++);
     }
 
-    const runs = Math.floor(Math.random() * state.patternLength / 4 + (state.patternLength / 12));
-    let step = Math.floor(Math.random() * 4) * 2;
-    let pitch = 20 + Math.floor(Math.random() * 10);
+    const pDist = wrndPrepare(pitches);
+    let pitch = wrnd(pDist) + 28;
 
-    for (let c = 0; c < runs; c++) {
-      const runLength = Math.floor(Math.random() * 6) + 1;
+    while (step < state.patternLength) {
+      const runLength = rndRange(this.preset.runLength);
 
       for (let d = 0; d < runLength; d++) {
-        //const blueNote = (pitch % 5 != 2) ? 0 : (d != (runLength - 1) && Math.random() > 0.8 ? 1 : 0);
+        const duration = wrnd(this.noteLengthDistribution) + 1;
+        let direction = rndSign();
+        // Limit pitch range and change direction to the opposite
+        if ((pitch <= 28 && direction < 0) || (pitch >= state.scalePitches.length - 28 && direction > 0)) direction *= -1;
+
+        pitch += wrnd(this.noteStepDistribution) * direction;
+        while (!this.isGoodPitch(state, pitch, duration, pitches, state.harmony[step], d == runLength - 1)) {
+          pitch += direction;
+        }
 
         events.push({
           type: 'note',
           timeSteps: step * 256,
           data: {
-            pitch: this.pentatonic[pitch]/* + blueNote*/,
+            pitch: state.scalePitches[pitch],
             velocity: 1,
             durationSteps: 0,
           }
         });
 
-        pitch += Math.floor(Math.random() * 7) - 3;
-        if (pitch < 20) { pitch += Math.floor(Math.random() * 4)};
-        if (pitch >= this.pentatonic.length - 15) { pitch -= Math.floor(Math.random() * 4)};
-
-        if (Math.random() > 0.4) step++;
-        step++;
-
+        step += duration;
         if (step >= state.patternLength) break;
       }
 
-      step += Math.floor(Math.random() * 4 + 1);
-
-      if (step >= state.patternLength) break;
+      step += wrnd(this.restLengthDistribution) + 1;
+      if (step % 2 == 1) step++;
     }
 
     return events;

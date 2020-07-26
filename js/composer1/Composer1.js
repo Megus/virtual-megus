@@ -160,7 +160,7 @@ class Composer1 extends Composer {
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
 
-    this.setupSection("intro");
+    this.setupSection("verse");
   }
 
   /**
@@ -187,7 +187,8 @@ class Composer1 extends Composer {
   setupSection(name) {
     this.state.section = name;
     this.state.patternLength = 64;
-    this.state.harmony = this.expandHarmony(this.generateHarmony(name));
+    this.state.harmonyMap = this.generateHarmony(name);
+    this.state.harmony = this.expandHarmony(this.state.harmonyMap);
     this.state.sectionPattern = 0;
 
     if (name == "intro") {
