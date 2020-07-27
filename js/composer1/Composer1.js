@@ -159,8 +159,8 @@ class Composer1 extends Composer {
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
 
-    this.setupSection("verse");
-    //this.setupSection("intro");
+    //this.setupSection("verse");
+    this.setupSection("intro");
   }
 
   /**
