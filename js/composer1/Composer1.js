@@ -150,6 +150,7 @@ class Composer1 extends Composer {
     core.sequencer.setBPM(100 + Math.floor(Math.random() * 30));
 
     const key = Math.floor(Math.random() * 12);
+    //const key = 9;
     const scale = 5; // Minor
 
     this.harmonies = {};
@@ -160,7 +161,8 @@ class Composer1 extends Composer {
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
 
-    this.setupSection("verse");
+    //this.setupSection("verse");
+    this.setupSection("intro");
   }
 
   /**
@@ -174,7 +176,7 @@ class Composer1 extends Composer {
   }
 
   generateHarmony(section) {
-    if (this.harmonies[section] == null) {
+    if (this.harmonies[section] == null || Math.random() > 0.6) {
       this.harmonies[section] = this.harmonyGenerator.generateHarmony();
     }
     return this.harmonies[section];
