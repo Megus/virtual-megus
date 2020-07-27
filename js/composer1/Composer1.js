@@ -47,7 +47,7 @@ class Composer1 extends Composer {
         this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad"]), 0.2, 1, 0.1, VTriangles),
       ],
       melody: [
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.3, 0.2, VTriangles),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead3"]), 0.9, 0.3, 0.2, VTriangles),
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.3, VTriangles),
       ],
       arpeggio: [
@@ -126,14 +126,14 @@ class Composer1 extends Composer {
   expandHarmony(harmonyMap) {
     const harmony = [];
     for (let c = 0; c < this.state.patternLength; c++) {
-      harmony.push(-1);
+      harmony.push([]);
     }
     for (const step in harmonyMap) {
       harmony[step] = harmonyMap[step];
     }
     let chord = harmony[0];
     for (let c = 0; c < this.state.patternLength; c++) {
-      if (harmony[c] != -1) {
+      if (harmony[c].length != 0) {
         chord = harmony[c];
       }
       harmony[c] = chord;
@@ -143,14 +143,12 @@ class Composer1 extends Composer {
 
 
 
-
   // Actual composing logic
 
   initState() {
     core.sequencer.setBPM(100 + Math.floor(Math.random() * 30));
 
     const key = Math.floor(Math.random() * 12);
-    //const key = 9;
     const scale = 5; // Minor
 
     this.harmonies = {};
@@ -161,8 +159,8 @@ class Composer1 extends Composer {
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
 
-    //this.setupSection("verse");
-    this.setupSection("intro");
+    this.setupSection("verse");
+    //this.setupSection("intro");
   }
 
   /**

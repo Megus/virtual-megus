@@ -84,14 +84,25 @@ const synthPresets = {
     ]
   },
   'lead2': {
-    ampEnvelope: {attack: 0.0, decay: 0.15, sustain: 0.3, release: 0.3},
+    ampEnvelope: {attack: 0.0, decay: 0.2, sustain: 0.4, release: 0.3},
     filterEnvelope: {attack: 0.01, decay: 0.5, sustain: 0, release: 0},
     filter: {cutoff: 5000, resonance: 2, envelopeLevel: 3000, type: 'lowpass'},
     osc: [
       {type: 'square', pitch: 0, detune: 0, level: 0.33},
       {type: 'sawtooth', pitch: 0, detune: -10, level: 0.23},
       {type: 'square', pitch: -12, detune: 0, level: 0.13},
-      {type: 'square', pitch: -12, detune: 10, level: 0.13},
+      {type: 'square', pitch: 12, detune: 10, level: 0.13},
+    ]
+  },
+  'lead3': {
+    ampEnvelope: {attack: 0.01, decay: 0.3, sustain: 0.6, release: 0.05},
+    filterEnvelope: {attack: 0.05, decay: 0.5, sustain: 0.8, release: 0.05},
+    filter: {cutoff: 3000, resonance: 3, envelopeLevel: 4000, type: 'lowpass'},
+    osc: [
+      {type: 'sawtooth', pitch: 0, detune: 0, level: 0.33},
+      {type: 'sawtooth', pitch: 0, detune: -5, level: 0.23},
+      {type: 'sawtooth', pitch: 12, detune: 0, level: 0.23},
+      {type: 'sawtooth', pitch: 19, detune: 5, level: 0.13},
     ]
   },
 

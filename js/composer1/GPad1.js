@@ -13,7 +13,7 @@ class GPad1 {
       // TODO: Find real duration
       const duration = 10;
 
-      for (let c = 0; c < chord.length; c++) {
+      for (let c = 1; c < chord.length; c++) {
         const pitch = state.scalePitches[chord[c] + 21];
         events.push({timeSteps: step * 256, type: 'note', data: {pitch: pitch, velocity: 1, durationSteps: duration * 256}});
       }

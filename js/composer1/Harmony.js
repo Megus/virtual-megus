@@ -17,16 +17,30 @@ class Harmony {
   generateHarmony() {
     const sequence = this.sequences[Math.floor(Math.random() * this.sequences.length)];
     let harmony = {};
+    let oldChord = -1;
 
-    for (let step in sequence) {
-      let chord = sequence[step] - 1;
-      let variation = (Math.floor(Math.random() * 3) - 1) * 2;
+    for (let step = 0; step < 64; step++) {
+      if (sequence[step] == null) continue;
+      let func = sequence[step] - 1;
+      let chord = func;
+
+      let variation = rndSign() * 2;
 
       if (chord + variation != (6 - this.scale)) {
         chord += variation;
+      } else {
+        variation = 0;
+      }
+      if ((step % 32 == 0) && chord == oldChord) {
+        if (variation != 0) {
+          chord -= variation * 2;
+        } else {
+          chord += rndSign() * 2;
+        }
       }
 
-      harmony[step] = [chord, chord + 2, chord + 4];
+      harmony[step] = [func, chord, chord + 2, chord + 4];
+      oldChord = chord;
     }
 
     return harmony;
