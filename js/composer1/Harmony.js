@@ -24,22 +24,25 @@ class Harmony {
       let func = sequence[step] - 1;
       let chord = func;
 
-      let variation = rndSign() * 2;
+      let variation = rndRange({min: -1, max: 1}) * 2;
 
       if (chord + variation != (6 - this.scale)) {
         chord += variation;
       } else {
         variation = 0;
       }
+
       if ((step % 32 == 0) && chord == oldChord) {
-        if (variation != 0) {
-          chord -= variation * 2;
-        } else {
-          chord += rndSign() * 2;
-        }
+        chord -= variation * 2;
       }
 
       harmony[step] = [func, chord, chord + 2, chord + 4];
+
+      // 7th
+      if (step != 1 && step != 6 && step != 2 && Math.random() > 0.5) {
+        harmony[step].push(chord + 6);
+      }
+
       oldChord = chord;
     }
 

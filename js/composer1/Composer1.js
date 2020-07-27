@@ -192,7 +192,7 @@ class Composer1 extends Composer {
     this.state.sectionPattern = 0;
 
     if (name == "intro") {
-      this.state.sectionLength = (Math.random() > 0.5) ? 2 : 4;
+      this.state.sectionLength = 2;
       this.state.parts = ["pad", "arpeggio"];
     } else if (name == "verse") {
       this.state.sectionLength = 2;
@@ -207,7 +207,7 @@ class Composer1 extends Composer {
       this.state.sectionLength = 2;
       this.state.parts = ["drums", "bass", "arpeggio"];
     } else if (name == "s2") {
-      this.state.sectionLength = (Math.random() > 0.6) ? 2 : 4;
+      this.state.sectionLength = (Math.random() > 0.7) ? 2 : 4;
       this.state.parts = ["bass", "pad", "arpeggio"];
     }
     console.log(`Section: ${name}, length: ${this.state.sectionLength} patterns`);
