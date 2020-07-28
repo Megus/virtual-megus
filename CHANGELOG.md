@@ -1,10 +1,15 @@
+July 27, 2020
+
+- Major improvement in the melody generator
+- Added 7th chords to the chord sequence generator
+
 July 18, 2020
 
 - Added chord sequence generator based on T→S→D→T rule
 
 July 9, 2020
 
-- Added simple song strucutre generator
+- Added simple song structure generator
 
 April 12, 2020
 
