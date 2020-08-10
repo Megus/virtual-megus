@@ -91,6 +91,10 @@ function wrnd(distribution) {
   return distribution[Math.floor(Math.random() * distribution.length)];
 }
 
+function rnd() {
+  return Math.random();
+}
+
 function rndRange(range) {
   return Math.floor(Math.random() * (1 + range.max - range.min) + range.min);
 }

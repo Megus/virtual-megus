@@ -71,16 +71,14 @@ const synthPresets = {
 
   // Leads
   'lead1': {
-    ampEnvelope: {attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.3},
-    filterEnvelope: {attack: 0.01, decay: 0.5, sustain: 0, release: 0},
-    filter: {cutoff: 6000, resonance: 2, envelopeLevel: 3000, type: 'lowpass'},
+    ampEnvelope: {attack: 0, decay: 0.3, sustain: 0.4, release: 0.6},
+    filterEnvelope: {attack: 0, decay: 0.4, sustain: 0, release: 0},
+    filter: {cutoff: 1000, resonance: 1, envelopeLevel: 2000, type: 'lowpass'},
     osc: [
       {type: 'sawtooth', pitch: 0, detune: 0, level: 0.23},
-      {type: 'sawtooth', pitch: 0, detune: -5, level: 0.23},
-      {type: 'square', pitch: 19, detune: -10, level: 0.07},
-      {type: 'square', pitch: 19, detune: 10, level: 0.07},
-      {type: 'sawtooth', pitch: 12, detune: 0, level: 0.23},
-      {type: 'sawtooth', pitch: 12, detune: 5, level: 0.23},
+      {type: 'square', pitch: 0, detune: -20, level: 0.23},
+      {type: 'sawtooth', pitch: 12, detune: 0, level: 0.07},
+      {type: 'square', pitch: 12, detune: 20, level: 0.07},
     ]
   },
   'lead2': {
@@ -102,7 +100,7 @@ const synthPresets = {
       {type: 'sawtooth', pitch: 0, detune: 0, level: 0.33},
       {type: 'sawtooth', pitch: 0, detune: -5, level: 0.23},
       {type: 'sawtooth', pitch: 12, detune: 0, level: 0.23},
-      {type: 'sawtooth', pitch: 19, detune: 5, level: 0.13},
+      {type: 'sawtooth', pitch: 12, detune: 5, level: 0.13},
     ]
   },
 

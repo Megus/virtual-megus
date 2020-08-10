@@ -49,6 +49,7 @@ class Composer1 extends Composer {
       melody: [
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead3"]), 0.9, 0.3, 0.2, VTriangles),
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.3, VTriangles),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.4, 0.1, VTriangles),
       ],
       arpeggio: [
         this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.4, VTriangles),
@@ -126,14 +127,16 @@ class Composer1 extends Composer {
   expandHarmony(harmonyMap) {
     const harmony = [];
     for (let c = 0; c < this.state.patternLength; c++) {
-      harmony.push([]);
+      harmony.push(null);
     }
+    // Fill chords from harmony map
     for (const step in harmonyMap) {
       harmony[step] = harmonyMap[step];
     }
+    // Fill empty spaces
     let chord = harmony[0];
     for (let c = 0; c < this.state.patternLength; c++) {
-      if (harmony[c].length != 0) {
+      if (harmony[c] != null) {
         chord = harmony[c];
       }
       harmony[c] = chord;
@@ -159,7 +162,6 @@ class Composer1 extends Composer {
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
 
-    //this.setupSection("verse");
     this.setupSection("intro");
   }
 
@@ -194,21 +196,35 @@ class Composer1 extends Composer {
     if (name == "intro") {
       this.state.sectionLength = 2;
       this.state.parts = ["pad", "arpeggio"];
+      if (rnd() > 0.7) {
+        this.state.parts.push(["melody", 2]);
+        this.generators.melody.prepareForPreset(melodyPresets[1]);
+      }
     } else if (name == "verse") {
       this.state.sectionLength = 2;
       this.state.parts = ["drums", "bass", "pad", "melody"];
+      this.generators.melody.prepareForPreset(melodyPresets[0]);
     } else if (name == "chorus") {
       this.state.sectionLength = 2;
       this.state.parts = ["drums", "bass", "pad", "arpeggio", ["melody", 1]];
+      this.generators.melody.prepareForPreset(melodyPresets[0]);
     } else if (name == "bridge") {
       this.state.sectionLength = 1;
       this.state.parts = ["drums", "bass", "pad", "arpeggio"];
     } else if (name == "s1") {
       this.state.sectionLength = 2;
       this.state.parts = ["drums", "bass", "arpeggio"];
+      if (rnd() > 0.7) {
+        this.state.parts.push(["melody", 2]);
+        this.generators.melody.prepareForPreset(melodyPresets[1]);
+      }
     } else if (name == "s2") {
       this.state.sectionLength = (Math.random() > 0.7) ? 2 : 4;
       this.state.parts = ["bass", "pad", "arpeggio"];
+      if (rnd() > 0.5) {
+        this.state.parts.push(["melody", 2]);
+        this.generators.melody.prepareForPreset(melodyPresets[1]);
+      }
     }
     console.log(`Section: ${name}, length: ${this.state.sectionLength} patterns`);
   }

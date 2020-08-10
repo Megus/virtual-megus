@@ -32,19 +32,25 @@ class Harmony {
         variation = 0;
       }
 
-      if ((step % 32 == 0) && chord == oldChord) {
+      /*if ((step % 32 == 0) && chord == oldChord) {
         chord -= variation * 2;
+      }*/
+
+      harmony[step] = {
+        root: chord,
+        func: func,
+        steps: [chord, chord + 2, chord + 4],
       }
 
-      harmony[step] = [func, chord, chord + 2, chord + 4];
-
       // 7th
-      if (step != 1 && step != 6 && step != 2 && Math.random() > 0.5) {
-        harmony[step].push(chord + 6);
+      if (chord != 6 && chord != 2 && Math.random() > 0.5) {
+        harmony[step].steps.push(chord + 6);
       }
 
       oldChord = chord;
     }
+
+    console.log(harmony);
 
     return harmony;
   }

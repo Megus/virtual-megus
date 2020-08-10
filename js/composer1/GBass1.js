@@ -19,7 +19,7 @@ class GBass1 {
     for (let c = 0; c < pattern.length; c++) {
       const step = pattern[c];
       if (step != -1) {
-        const pitch = state.scalePitches[state.harmony[startStep + c][1] + step + 7];
+        const pitch = state.scalePitches[state.harmony[startStep + c].root + step + 7];
         events.push({
           type: 'note',
           timeSteps: (c + startStep) * 256,
