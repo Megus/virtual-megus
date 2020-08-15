@@ -41,10 +41,10 @@ class Composer1 extends Composer {
         this.createChannel(new DrumMachine(context, drumKits["tr808"]), 1, 0.1, 0, VDots),
       ],
       bass: [
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["bass"]), 1, 0, 0, VTriangles),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["bass1"]), 1, 0, 0, VTriangles),
       ],
       pad: [
-        this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad"]), 0.2, 1, 0.1, VTriangles),
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad1"]), 0.2, 1, 0.1, VTriangles),
       ],
       melody: [
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead3"]), 0.9, 0.3, 0.2, VTriangles),
@@ -52,7 +52,7 @@ class Composer1 extends Composer {
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.4, 0.1, VTriangles),
       ],
       arpeggio: [
-        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp"]), 0.4, 0.7, 0.4, VTriangles),
+        this.createChannel(new PolySynth(context, pitchTable, synthPresets["arp1"]), 0.4, 0.7, 0.4, VTriangles),
       ],
     };
 
