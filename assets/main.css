@@ -104,3 +104,9 @@ a:visited {
 #textContent {
   margin: 1em;
 }
+
+#updated {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 12px;
+}

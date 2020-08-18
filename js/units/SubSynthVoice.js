@@ -29,8 +29,17 @@ class SubSynthVoice {
     this.filterNode.connect(this.pannerNode);
     this.pannerNode.connect(this.gainNode);
 
+    // Create modulation sources
     this.pitchMod = context.createGain();
 
+    // Create controls
+    this.controls = {};
+    for (let cc in preset.cc) {
+      this.controls[cc] = context.createConstantSource();
+      this.controls[cc].offset.value = 0;
+    }
+
+    // Create oscillator bank
     this.oscBank = [];
     for (let c = 0; c < preset.osc.length; c++) {
       const osc = context.createOscillator();
@@ -69,8 +78,6 @@ class SubSynthVoice {
         this.oscBank[c].start(time);
       }
 
-      this.velocity = note.velocity;
-
       let endTime = time;
       // Create ADSR envelopes
       this.envelopes = preset.env.map((adsr) => {
@@ -101,6 +108,11 @@ class SubSynthVoice {
           this.envelopes[mod.src[1]].connect(modNode);
         } else if (mod.src[0] == "lfo") {
           this.lfos[mod.src[1]].connect(modNode);
+        }
+
+        // Modulation control (if present)
+        if (mod.control != null) {
+
         }
 
         if (mod.dst[0] == "output") {

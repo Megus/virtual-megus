@@ -23,6 +23,7 @@ const synthPresets = {
   "bass1": {
     tags: ["bass"],
     range: [12, 48],
+    cc: [0],
     env: [
       {attack: 0, decay: 0.4, sustain: 0, release: 0},  // amp
       {attack: 0, decay: 0.2, sustain: 0, release: 0},  // filter
@@ -33,7 +34,7 @@ const synthPresets = {
     ],
     filter: {cutoff: 300, resonance: 1, type: 'lowpass'},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ['env', 1], amount: 500, dst: ["filter", "cutoff"]},
     ],
   },
@@ -42,6 +43,7 @@ const synthPresets = {
   "stab1": {
     tags: ["stab"],
     range: [24, 80],
+    cc: [0],
     env: [
       {attack: 0, decay: 1.5, sustain: 0, release: 0},
       {attack: 0, decay: 1, sustain: 0, release: 0},
@@ -53,7 +55,7 @@ const synthPresets = {
     ],
     filter: {cutoff: 4000, resonance: 1, type: 'lowpass'},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ['env', 1], amount: 1000, dst: ["filter", "cutoff"]},
     ]
   },
@@ -62,6 +64,7 @@ const synthPresets = {
   'arp1': {
     tags: ["arp"],
     range: [24, 80],
+    cc: [0],
     env: [
       {attack: 0, decay: 0.2, sustain: 0.2, release: 0.5},
       {attack: 0.1, decay: 0.3, sustain: 0, release: 0}
@@ -75,7 +78,7 @@ const synthPresets = {
     filter: {cutoff: 800, resonance: 2, type: 'lowpass'},
     panning: {pan: 0.2, centerPitch: 48, spread: -0.03},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 1200, dst: ["filter", "cutoff"]},
     ],
   },
@@ -84,6 +87,7 @@ const synthPresets = {
   'pad1': {
     tags: ["pad"],
     range: [24, 80],
+    cc: [0],
     env: [
       {attack: 0.7, decay: 2, sustain: 0.8, release: 2},
       {attack: 0.5, decay: 2, sustain: 0.4, release: 2},
@@ -99,10 +103,9 @@ const synthPresets = {
     filter: {cutoff: 3000, resonance: 1, type: 'lowpass'},
     panning: {pan: -0.2, centerPitch: 48, spread: 0.03},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 500, dst: ["filter", "cutoff"]},
-      //{src: ["lfo", 0], amount: 1000, dst: ["filter", "cutoff"]},
-      //{src: ["lfo", 0], amount: 50, dst: ["pitch"]},
+      {src: ["env", 0], amount: 500, control: ["env", 1], dst: ["filter", "cutoff"]},
     ],
   },
 
@@ -110,6 +113,7 @@ const synthPresets = {
   'lead1': {
     tags: ["lead"],
     range: [24, 80],
+    cc: [0],
     env: [
       {attack: 0, decay: 0.3, sustain: 0.4, release: 0.6},
       {attack: 0, decay: 0.4, sustain: 0, release: 0},
@@ -122,13 +126,14 @@ const synthPresets = {
     ],
     filter: {cutoff: 1000, resonance: 1, envelopeLevel: 2000, type: 'lowpass'},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 2000, dst: ["filter", "cutoff"]},
     ]
   },
   'lead2': {
     tags: ["lead"],
     range: [24, 80],
+    cc: [0],
     env: [
       {attack: 0.0, decay: 0.2, sustain: 0.4, release: 0.3},
       {attack: 0.01, decay: 0.5, sustain: 0, release: 0},
@@ -141,13 +146,14 @@ const synthPresets = {
     ],
     filter: {cutoff: 5000, resonance: 2, type: 'lowpass'},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 3000, dst: ["filter", "cutoff"]},
     ]
   },
   'lead3': {
     tags: ["lead"],
     range: [24, 80],
+    cc: [0],
     env: [
       {attack: 0.01, decay: 0.3, sustain: 0.6, release: 0.05},
       {attack: 0.05, decay: 0.5, sustain: 0.8, release: 0.05},
@@ -160,7 +166,7 @@ const synthPresets = {
     ],
     filter: {cutoff: 3000, resonance: 3, type: 'lowpass'},
     mod: [
-      {src: ["env", 0], amount: 1, dst: ["output"]},
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 4000, dst: ["filter", "cutoff"]},
     ]
   },

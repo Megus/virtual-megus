@@ -152,6 +152,7 @@ class Composer1 extends Composer {
     core.sequencer.setBPM(100 + Math.floor(Math.random() * 30));
 
     const key = Math.floor(Math.random() * 12);
+    //const key = 9;
     const scale = 5; // Minor
 
     this.harmonies = {};
