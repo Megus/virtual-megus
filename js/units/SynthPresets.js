@@ -105,7 +105,7 @@ const synthPresets = {
     mod: [
       {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 500, dst: ["filter", "cutoff"]},
-      {src: ["env", 0], amount: 500, control: ["env", 1], dst: ["filter", "cutoff"]},
+      {src: ["lfo", 0], amount: 1000, control: ["env", 1], dst: ["filter", "cutoff"]},
     ],
   },
 
@@ -157,6 +157,10 @@ const synthPresets = {
     env: [
       {attack: 0.01, decay: 0.3, sustain: 0.6, release: 0.05},
       {attack: 0.05, decay: 0.5, sustain: 0.8, release: 0.05},
+      {attack: 0.7, decay: 0.1, sustain: 1, release: 0.05},
+    ],
+    lfo: [
+      {rate: 4, type: "triangle"},
     ],
     osc: [
       {type: 'sawtooth', pitch: 0, detune: 0, level: 0.33},
@@ -168,6 +172,7 @@ const synthPresets = {
     mod: [
       {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
       {src: ["env", 1], amount: 4000, dst: ["filter", "cutoff"]},
+      {src: ["lfo", 0], amount: 50, control: ["env", 2], dst: ["pitch"]},
     ]
   },
 }

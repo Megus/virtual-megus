@@ -164,6 +164,7 @@ class Composer1 extends Composer {
     };
 
     this.setupSection("intro");
+    //this.setupSection("verse");
   }
 
   /**

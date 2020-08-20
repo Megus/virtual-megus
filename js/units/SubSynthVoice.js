@@ -57,6 +57,31 @@ class SubSynthVoice {
     this.output = this.gainNode;
   }
 
+  applyModSource(node, src) {
+    if (src[0] == "env") {
+      this.envelopes[src[1]].connect(node);
+    } else if (src[0] == "lfo") {
+      this.lfos[src[1]].connect(node);
+    } else if (src[0] == "vel") {
+      this.velocitySrc.connect(node);
+    }
+  }
+
+  applyModToDestination(modNode, dst) {
+    if (dst[0] == "output") {
+      // Amp
+      modNode.connect(this.gainNode.gain);
+    } else if (dst[0] == "filter") {
+      // Filter modulations
+      if (dst[1] == "cutoff") {
+        modNode.connect(this.filterNode.frequency);
+      }
+    } else if (dst[0] == "pitch") {
+      // Pitch modulation
+      modNode.connect(this.pitchMod);
+    }
+  }
+
   playNote(time, note) {
     const preset = this.unit.voicePreset;
     const context = this.unit.context;
@@ -78,8 +103,8 @@ class SubSynthVoice {
         this.oscBank[c].start(time);
       }
 
-      let endTime = time;
       // Create ADSR envelopes
+      let endTime = time;
       this.envelopes = preset.env.map((adsr) => {
         const adsrNode = context.createConstantSource();
         adsrNode.offset.value = 0;
@@ -87,6 +112,11 @@ class SubSynthVoice {
         adsrNode.start();
         return adsrNode;
       });
+
+      // Note parameters as sources
+      this.velocitySrc = context.createConstantSource();
+      this.velocitySrc.offset.value = note.velocity;
+      this.velocitySrc.start();
 
       // Create LFOs
       if (preset.lfo != null) {
@@ -104,29 +134,18 @@ class SubSynthVoice {
         // Create modulation source
         let modNode = context.createGain();
         modNode.gain.value = mod.amount;
-        if (mod.src[0] == "env") {
-          this.envelopes[mod.src[1]].connect(modNode);
-        } else if (mod.src[0] == "lfo") {
-          this.lfos[mod.src[1]].connect(modNode);
-        }
+        this.applyModSource(modNode, mod.src);
 
         // Modulation control (if present)
         if (mod.control != null) {
-
+          let modControl = context.createGain();
+          modControl.gain.value = 0;
+          this.applyModSource(modControl.gain, mod.control);
+          modNode.connect(modControl);
+          modNode = modControl;
         }
 
-        if (mod.dst[0] == "output") {
-          // Amp
-          modNode.connect(this.gainNode.gain);
-        } else if (mod.dst[0] == "filter") {
-          // Filter modulations
-          if (mod.dst[1] == "cutoff") {
-            modNode.connect(this.filterNode.frequency);
-          }
-        } else if (mod.dst[0] == "pitch") {
-          // Pitch modulation
-          modNode.connect(this.pitchMod);
-        }
+        this.applyModToDestination(modNode, mod.dst);
       });
 
       this.shutNote(endTime);
@@ -135,7 +154,6 @@ class SubSynthVoice {
       console.log(time);
       console.log(note);
     }
-
   }
 
   shutNote(time) {
