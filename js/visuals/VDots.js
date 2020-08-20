@@ -20,7 +20,7 @@ class VDots extends VisualLayer {
       this.dots.push({
         x: Math.random(),
         y: Math.random(),
-        radius: event.data.velocity * 0.1,
+        radius: 0.1,
         color: this.dotColors[Math.floor(event.data.pitch / 12)],
         speed: 0.2
       });

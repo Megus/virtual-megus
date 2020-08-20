@@ -3,6 +3,7 @@ let currentComposer = null;
 
 function init() {
   core = new Core();
+  document.getElementById("playButton").focus();
 }
 
 async function play() {
@@ -15,6 +16,7 @@ async function play() {
   document.getElementById("stopButton").style.display = "block";
   document.getElementById("pauseButton").style.display = "block";
   document.getElementById("buttonContainer").className = "buttonContainer2";
+  document.getElementById("stopButton").focus();
 }
 
 function stop() {
@@ -22,6 +24,7 @@ function stop() {
   document.getElementById("stopButton").style.display = "none";
   document.getElementById("pauseButton").style.display = "none";
   document.getElementById("buttonContainer").className = "buttonContainer1";
+  document.getElementById("playButton").focus();
   core.stop();
   currentComposer = null;
 }

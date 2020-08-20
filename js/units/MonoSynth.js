@@ -24,7 +24,7 @@ class MonoSynth extends Unit {
     this.output = this.gainNode;
   }
 
-  // Note: {pitch: ..., velocity: ..., duration: ...}
+  // Note: {pitch: ..., duration: ...}
   playNote(time, note) {
     this.shutNote(time);
     const voice = new SubSynthVoice(this);

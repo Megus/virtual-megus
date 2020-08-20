@@ -23,7 +23,8 @@
 ```js
 {
   pitch: 48,            // Note pitch from pitch table
-  velocity: 1,          // Note velocity (range: 0-1)
+  velocity: 1,          // Velocity
+  cc: {0: 1},           // Controller values
   durationSteps: 1,     // Note duration in steps (1/4096 of a bar)
   durationSeconds: 0.5, // Note duration in seconds
 }

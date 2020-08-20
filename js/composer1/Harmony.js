@@ -50,8 +50,6 @@ class Harmony {
       oldChord = chord;
     }
 
-    console.log(harmony);
-
     return harmony;
   }
 }

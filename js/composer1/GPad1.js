@@ -15,7 +15,15 @@ class GPad1 {
 
       for (let c = 1; c < chord.steps.length; c++) {
         const pitch = state.scalePitches[chord.steps[c] + 21];
-        events.push({timeSteps: step * 256, type: 'note', data: {pitch: pitch, velocity: 1, durationSteps: duration * 256}});
+        events.push({
+          timeSteps: step * 256,
+          type: 'note',
+          data: {
+            pitch: pitch,
+            velocity: 1,
+            durationSteps: duration * 256
+          }
+        });
       }
     }
 
