@@ -42,8 +42,15 @@ class SubSynthVoice {
     // Create oscillator bank
     this.oscBank = [];
     for (let c = 0; c < preset.osc.length; c++) {
-      const osc = context.createOscillator();
-      osc.type = preset.osc[c].type;
+      let osc;
+      if (preset.osc[c].type == "pulse") {
+        osc = context.createPulseOscillator();
+        osc.width.value = preset.osc[c].width || 0;
+      } else {
+        osc = context.createOscillator();
+        osc.type = preset.osc[c].type;
+      }
+
       osc.detune.value = preset.osc[c].detune;
       this.pitchMod.connect(osc.detune);
       const oscGain = context.createGain();
@@ -79,6 +86,11 @@ class SubSynthVoice {
     } else if (dst[0] == "pitch") {
       // Pitch modulation
       modNode.connect(this.pitchMod);
+    } else if (dst[0] == "osc") {
+      // Oscillator parameter
+      if (dst[2] == "width") {
+        modNode.connect(this.oscBank[dst[1]].width);
+      }
     }
   }
 
@@ -157,11 +169,12 @@ class SubSynthVoice {
   }
 
   shutNote(time) {
-    for (let c = 0; c < this.oscBank.length; c++) {
-      try {
-        this.oscBank[c].stop(time);
-      } catch (e) {}
-    }
+    try {
+      this.oscBank.forEach((osc) => osc.stop(time));
+      this.envelopes.forEach((env) => env.stop(time));
+      this.lfos.forEach((lfo) => lfo.stop(time));
+      this.velocitySrc.stop(time);
+    } catch (e) {}
   }
 
   getAudioLevel() {

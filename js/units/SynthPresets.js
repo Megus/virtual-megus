@@ -175,4 +175,23 @@ const synthPresets = {
       {src: ["lfo", 0], amount: 50, control: ["env", 2], dst: ["pitch"]},
     ]
   },
+  "lead4": {
+    tags: ["lead"],
+    range: [24, 80],
+    env: [
+      {attack: 0.001, decay: 0.3, sustain: 0.6, release: 0.02},
+    ],
+    lfo: [
+      {rate: 4, type: "triangle"},
+    ],
+    osc: [
+      {type: "pulse", width: 0.5, pitch: 0, detune: 0, level: 1},
+    ],
+    filter: {cutoff: 5000, resonance: 1, type: "lowpass"},
+    mod: [
+      {src: ["env", 0], amount: 1, control: ["vel"], dst: ["output"]},
+      {src: ["env", 0], amount: 2000, dst: ["filter", "cutoff"]},
+      {src: ["lfo", 0], amount: 0.3, dst: ["osc", 0, "width"]},
+    ]
+  }
 }

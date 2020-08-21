@@ -47,7 +47,7 @@ class Composer1 extends Composer {
         this.createChannel(new PolySynth(context, pitchTable, synthPresets["pad1"]), 0.2, 1, 0.1, VTriangles),
       ],
       melody: [
-        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead3"]), 0.9, 0.3, 0.2, VTriangles),
+        this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead4"]), 0.9, 0.3, 0.2, VTriangles),
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead2"]), 0.9, 0.3, 0.3, VTriangles),
         this.createChannel(new MonoSynth(context, pitchTable, synthPresets["lead1"]), 0.9, 0.4, 0.1, VTriangles),
       ],
@@ -163,8 +163,8 @@ class Composer1 extends Composer {
       scalePitches: diatonicScalePitches(key, scale, this.pitchTable),
     };
 
-    this.setupSection("intro");
-    //this.setupSection("verse");
+    //this.setupSection("intro");
+    this.setupSection("verse");
   }
 
   /**
